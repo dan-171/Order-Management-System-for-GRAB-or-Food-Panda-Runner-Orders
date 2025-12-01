@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Runner Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../sralogin.css">
+  <link rel="stylesheet" href="../css/sralogin.css">
 <body>
   <div id="banner-top">
       <img src="../images/banner.webp" alt="banner img"/>
@@ -22,7 +22,7 @@
         <input id="pw-input" type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
     </form>
-    <p>Forgot ID or Password</p>
+    <p><a href="../forgotCredentials.php">Forgot ID or Password</a></p>
   </div>
   <div id="delivery-platforms">
     <img src="../images/grab-logo.webp" alt="grab"/>

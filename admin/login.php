@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../sralogin.css">
+  <link rel="stylesheet" href="../css/sralogin.css">
 <body>
   <div id="banner-top">
       <img src="../images/banner.webp" alt="banner img"/>

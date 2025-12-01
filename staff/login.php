@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Staff Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/common.css">
   <link rel="stylesheet" href="../css/sralogin.css">
 </head>
 <body>
@@ -23,7 +24,7 @@
         <input id="pw-input" type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
     </form>
-    <p>Forgot ID or Password</p>
+    <a id="forgot-credentials" href="../forgotCredentials.php">Forgot ID or Password</a>
   </div>
 </body>
 </html>

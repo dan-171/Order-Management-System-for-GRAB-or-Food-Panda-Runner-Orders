@@ -23,7 +23,7 @@
         <input id="pw-input" type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
     </form>
-    <a id="forgot-credentials" href="../forgotCredentials.php">Forgot ID or Password</a>
+    <a id="reset-credentials" href="../resetCredentials.php?role=admin">Forgot ID or Password</a>
   </div>
 </body>
 </html>

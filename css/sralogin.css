@@ -1,0 +1,94 @@
+*{
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  background-color: rgba(244, 246, 249);
+  height: 100vh;
+}
+
+#banner-top {
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 450px;
+  height: 253px;
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+
+#banner-top img {
+  display: block;
+  width: 100%;
+  position: relative;
+  transition: transform 0.6s;
+}
+
+#banner-top img:hover{
+  transform: scale(1.015);
+}
+
+#login-box{
+  z-index: 1;
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 30px;
+  width: 300px;
+  background-color: #fff;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+  border-radius: 10px;
+  text-align: center;
+}
+
+#login-box h2{
+  font-size: 2rem;
+}
+
+#login-box form{
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+#login-box form #id-input, #login-box form #pw-input{
+  background-color: rgba(244, 246, 249, 0.5);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#login-box form button{
+  padding: 5px;
+  background-color: rgba(0,0,0,1.0);
+  color: #fff;
+  border-radius: 10px;
+  transition: box-shadow 0.2s;
+}
+
+#login-box form button:hover{
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.9);
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+#delivery-platforms{
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#delivery-platforms img{
+  max-width: 128px;
+  max-height: auto;
+}

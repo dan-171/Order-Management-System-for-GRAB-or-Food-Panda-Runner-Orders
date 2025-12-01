@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2025 at 04:39 PM
+-- Generation Time: Dec 01, 2025 at 05:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -26,6 +26,17 @@ USE `oms`;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `admin`
+--
+DROP TABLE IF EXISTS `admin`;
+CREATE TABLE IF NOT EXISTS `admin` (
+  `ID` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `items`
 --
 DROP TABLE IF EXISTS `items`;
@@ -33,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `ID` varchar(255) NOT NULL,
   `Name` varchar(255) NOT NULL,
   `Price` decimal(10,2) NOT NULL,
-  `Availability` enum('Available','Unavailable') NOT NULL
+  `Availability` enum('Available','Unavailable') NOT NULL DEFAULT 'Available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -61,16 +72,15 @@ CREATE TABLE IF NOT EXISTS `members` (
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE IF NOT EXISTS `orders` (
   `ID` varchar(255) NOT NULL,
-  `Type` enum('online','walk-in') NOT NULL,
+  `Type` enum('online','walk-in') NOT NULL DEFAULT 'online',
   `Member_ID` varchar(255) NOT NULL,
-  `Staff_ID` varchar(255) NOT NULL,
-  `Runner_ID` varchar(255) NOT NULL,
+  `Runner_ID` varchar(255) DEFAULT NULL,
   `Total_Amount` decimal(10,2) NOT NULL,
-  `Order_Date` datetime NOT NULL,
-  `Ready_Date` datetime NOT NULL,
-  `PickedUp_Date` datetime NOT NULL,
-  `Delivered_Date` datetime NOT NULL,
-  `Status` enum('Order Placed','Readying Order','Picked Up','In Transit','Delivered') NOT NULL
+  `Order_Date` datetime NOT NULL DEFAULT current_timestamp(),
+  `Ready_Date` datetime DEFAULT NULL,
+  `PickedUp_Date` datetime DEFAULT NULL,
+  `Delivered_Date` datetime DEFAULT NULL,
+  `Status` enum('Order Placed','Readying Order','Picked Up','In Transit','Delivered') NOT NULL DEFAULT 'Order Placed'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -113,15 +123,18 @@ CREATE TABLE IF NOT EXISTS `runners` (
 DROP TABLE IF EXISTS `staff`;
 CREATE TABLE IF NOT EXISTS `staff` (
   `ID` varchar(255) NOT NULL,
-  `Password` varchar(255) NOT NULL,
-  `Name` varchar(255) NOT NULL,
-  `Tel` int(11) NOT NULL,
-  `Email` varchar(255) NOT NULL
+  `Password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `items`
@@ -141,7 +154,6 @@ ALTER TABLE `members`
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `member_id` (`Member_ID`),
-  ADD KEY `staff_id` (`Staff_ID`),
   ADD KEY `runner_id` (`Runner_ID`);
 
 --
@@ -173,8 +185,7 @@ ALTER TABLE `staff`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `member_id` FOREIGN KEY (`Member_ID`) REFERENCES `members` (`ID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `runner_id` FOREIGN KEY (`Runner_ID`) REFERENCES `runners` (`ID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `staff_id` FOREIGN KEY (`Staff_ID`) REFERENCES `staff` (`ID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `runner_id` FOREIGN KEY (`Runner_ID`) REFERENCES `runners` (`ID`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `order_items`

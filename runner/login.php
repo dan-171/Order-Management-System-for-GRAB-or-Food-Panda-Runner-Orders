@@ -1,17 +1,31 @@
 <?php
   session_start();
-  include '../config.php';
+  include "../config.php";
+
+  $role = "Runner";
+  $error = "";
+  
+  if($_SERVER["REQUEST_METHOD"] == "POST"){
+      $id = $_POST["id"];
+      $pw = $_POST["pw"];
+
+      $stmt = $pdo->prepare("SELECT * FROM runners WHERE Id = ?");
+      $stmt->execute([$id]);
+      $user = $stmt->fetch();
+      if ($user && password_verify($pw, $user["Password"])){
+        $_SESSION["user"] = [
+            "id" => $admin["ID"],
+            "role" => "admin",
+        ];
+        header("Location: runner.php");
+        exit;
+      } else $error = "❌ Invalid credentials";
+  }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Runner Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/common.css">
-  <link rel="stylesheet" href="../css/sralogin.css">
+<?php include "../sraLoginHead.php"?>
 <body>
   <div id="banner-top">
       <img src="../images/banner.webp" alt="banner img"/>

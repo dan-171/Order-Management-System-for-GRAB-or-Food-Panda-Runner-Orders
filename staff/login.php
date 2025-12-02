@@ -1,19 +1,32 @@
 <?php
   session_start();
   $_SESSION["userType"] = "staff";
-  include '../config.php';
+  include "../config.php";
+
+  $role = "Staff";
+  $error = "";
+  
+  if($_SERVER["REQUEST_METHOD"] == "POST"){
+      $id = $_POST["id"];
+      $pw = $_POST["pw"];
+
+      $stmt = $pdo->prepare("SELECT * FROM staff WHERE Id = ?");
+      $stmt->execute([$id]);
+      $user = $stmt->fetch();
+      if ($user && password_verify($pw, $user["Password"])){
+        $_SESSION["user"] = [
+            "id" => $admin["ID"],
+            "role" => "admin",
+        ];
+        header("Location: staff.php");
+        exit;
+      } else $error = "❌ Invalid credentials";
+  }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/common.css">
-  <link rel="stylesheet" href="../css/sralogin.css">
-</head>
+<?php include "../sraLoginHead.php"?>
 <body>
   <div id="banner-top">
       <img src="../images/banner.webp" alt="banner img"/>

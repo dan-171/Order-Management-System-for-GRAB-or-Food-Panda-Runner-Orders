@@ -1,6 +1,7 @@
 #banner-top {
   display: block;
   position: absolute;
+  top: -2%;
   left: 50%;
   transform: translateX(-50%);
   width: 450px;
@@ -64,13 +65,30 @@
 
 #login-box form button:hover{
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.85);
   box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+#login p{
+  padding-top: 20px;
 }
 
 #reset-credentials {
   text-decoration: none;
   color: #000;
+  transition: font-size 0.2s
+}
+
+#reset-credentials:hover {
+  font-size: 1.015rem;
+}
+
+#wrong-cred-msg{
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 20%;
+  margin: 0 auto;
 }
 
 #delivery-platforms{

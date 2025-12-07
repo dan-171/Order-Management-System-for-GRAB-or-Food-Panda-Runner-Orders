@@ -24,7 +24,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<?php include "../loginHead.php"?>
+<?php $role="Staff"; include "../loginHead.php"?>
 <body>
   <div id="banner-top">
       <img src="../../images/banner.webp" alt="banner img"/>

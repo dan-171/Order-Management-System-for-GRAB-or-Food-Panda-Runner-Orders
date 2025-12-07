@@ -2,7 +2,6 @@
   session_start();
   include "../../config.php";
   $error = "";
-  
   if($_SERVER["REQUEST_METHOD"] == "POST"){
       $id = $_POST["id"];
       $pw = $_POST["pw"];
@@ -22,7 +21,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<?php include "../loginHead.php"?>
+<?php $role="Admin"; include "../loginHead.php"?>
 <body>
   <div id="banner-top">
       <img src="../../images/banner.webp" alt="banner img"/>

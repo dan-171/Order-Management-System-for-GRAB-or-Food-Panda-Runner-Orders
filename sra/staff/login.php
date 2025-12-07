@@ -3,7 +3,6 @@
   $_SESSION["userType"] = "staff";
   include "../../config.php";
 
-  $role = "Staff";
   $error = "";
   
   if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -15,8 +14,7 @@
       $user = $stmt->fetch();
       if ($user && password_verify($pw, $user["Password"])){
         $_SESSION["user"] = [
-            "id" => $admin["ID"],
-            "role" => "admin",
+            "id" => $staff["ID"],
         ];
         header("Location: staff.php");
         exit;

@@ -1,0 +1,14 @@
+#create-staff-acc form {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+#create-staff-acc form p {
+  font-size: 0.7rem;
+}
+
+#create-staff-acc form input{
+  padding: 5px;
+}

@@ -3,6 +3,8 @@ session_start();
 session_unset();
 session_destroy();
 
-header('Location: sraLogin.php');
+$role = isset($_GET['role']) ? $_GET['role'] : '';
+
+header("Location: ../sra/$role/login.php");
 exit;
 ?>

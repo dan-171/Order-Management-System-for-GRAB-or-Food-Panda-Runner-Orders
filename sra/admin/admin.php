@@ -21,7 +21,7 @@
       <li class="nav-option"><div><p>🍽️ Restaurant </p></div></li>
       <li class="nav-option"><div><p>🧑🏻‍💼 Account Management</p></div></li>
       <li class="nav-option"><div><p>🔐 Change Password</p></div></li>
-      <li class="nav-option"><div><p>🚪 Log Out</p></div></li>
+      <li class="nav-option"><div><a href="../logout.php?role=admin" onclick="return confirm('Log out?')"><p>🚪 Log Out</p></a></div></li>
     </ul>
   </nav>
   <div id="main-panel">

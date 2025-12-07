@@ -1,8 +1,6 @@
 <?php
   session_start();
   include "../../config.php";
-
-  $role = "Admin";
   $error = "";
   
   if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -15,7 +13,6 @@
       if ($user && password_verify($pw, $user["Password"])){
         $_SESSION["user"] = [
             "id" => $admin["ID"],
-            "role" => "admin",
         ];
         header("Location: admin.php");
         exit;

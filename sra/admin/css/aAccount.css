@@ -1,4 +1,9 @@
-#staff-title{
+#staff-panel {
+  margin-bottom: 20px;
+}
+
+#staff-title,
+#runner-title{
   color: #fff;
   background-color: #000;
   padding: 5px 20px;
@@ -6,11 +11,13 @@
   border-left: double 10px rgb(244, 246, 249);
 }
 
-#staff-title h2{
+#staff-title h2,
+#runner-title h2{
   margin: 0;
 }
 
-#create-staff-acc, #staff-list {
+#create-staff-acc, #staff-list, 
+#runner-list {
   padding: 0 20px;
 }
 
@@ -30,12 +37,16 @@
   font-size: 0.7rem;
 }
 
-#staff-table-wrapper{
+#staff-table-wrapper,
+#runner-table-wrapper{
   max-height: 350px;
+  max-width: 100%;
   overflow-y: auto;
+  overflow-x: auto;
 }
 
-#staff-table {
+#staff-table,
+#runner-table{
   border-collapse: collapse;
   border-radius: 10px 10px 0 0;
   overflow: hidden;
@@ -43,32 +54,61 @@
   text-align: center;
 }
 
-#staff-table thead tr {
+#staff-table thead tr,
+#runner-table thead tr {
   background-color: rgba(84, 84, 84, 0.7);
   color: #fff;
 }
 
-#staff-table thead tr th, #staff-table tbody tr td{
+#staff-table thead tr th, #staff-table tbody tr td,
+#runner-table thead tr th, #runner-table thead tr td{
   padding: 10px;
 }
 
-#staff-table tbody tr:nth-child(odd) {
+#staff-table tbody tr:nth-child(odd),
+#runner-table tbody tr:nth-child(odd) {
   background-color: #D3D3D3;
 }
 
-#staff-table tbody tr:nth-child(even) {
+#staff-table tbody tr:nth-child(even),
+#runner-table tbody tr:nth-child(even) {
   background-color: #f9fafb;
 }
 
-#staff-id, .staff-table-no, .staff-table-staff-id{
+#runner-table tbody td{
+  padding: 0 20px;
+}
+
+#staff-table tbody td:first-child,
+#runner-table tbody td:first-child {
+  width: 30px;
+}
+
+#staff-table tbody td:nth-child(2),
+#runner-table tbody td:nth-child(2) {
+  width: 80px;
+}
+
+#staff-id, .staff-table-no, .staff-table-staff-id,
+.runner-table-no, .runner-table-id, .runner-table-tel{
   font-family: "Montserrat";
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-.staff-table-actions{
+.staff-table-actions,
+.runner-opts-container {
   display: flex;
   flex-flow: row wrap;
+  align-items: center;
+}
+
+.runner-opts-container{
+  width: 250px;
+}
+
+.empty-div{
+  flex: 5;
 }
 
 .opt-edit, .opt-delete{
@@ -79,6 +119,7 @@
   background:none;
   border:none;
   padding:0;
+  font-size: 1.0rem;
 }
 
 .opt-edit input:visited, .opt-delete input:visited{

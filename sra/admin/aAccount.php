@@ -1,6 +1,7 @@
 <?php
-  //staff acc table index
+  //staff & runner acc table index
   $staffNo = 1;
+  $runnerNo = 1;
 
   //add or update staff
   $editing = false;
@@ -58,6 +59,10 @@
   $maxID = $row['maxID'] ?? 0;
   $newStaffID = "S" . str_pad($maxID + 1, 2, "0", STR_PAD_LEFT);
 
+  //fetch all runners
+  $fetchRunners = $pdo->prepare("SELECT * FROM runners ORDER BY CAST(SUBSTRING(ID,2) AS UNSIGNED)");
+  $fetchRunners->execute();
+  $runners = $fetchRunners->fetchAll(PDO::FETCH_ASSOC); 
 ?>
 
 <!-- staff -->
@@ -108,6 +113,7 @@
                 <td class="staff-table-no"><?= $staffNo ?></td>
                 <td class="staff-table-staff-id"><?= $staff['ID'] ?></td>
                 <td class="staff-table-actions">
+                  <div class="empty-div"></div>
                   <div class="opt-edit">
                     <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
                       <input type="hidden" name="staffIdToEdit" value="<?= $staff['ID']?>"/>
@@ -123,6 +129,67 @@
                 </td>
               </tr>
             <?php $staffNo++; endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    <?php endif; ?>
+  </div>
+</div>
+
+<!-- runner -->
+<div id="runner-panel">
+  <div id="runner-title"><h2>Runners</h2></div>
+  <div id="runner-list">
+    <?php if (!$runners): ?>
+      <p>No runner account has been created yet.</p>
+    <?php else: ?>
+      <h3>Existing Runner Accounts</h3>
+      <div id="runner-table-wrapper">
+        <table id="runner-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Tel</th>
+              <th>Email</th>
+              <th>Platform</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($runners as $runner): ?>
+              <tr>
+                <td class="runner-table-no"><?= $runnerNo ?></td>
+                <td class="runner-table-id"><?= $runner["ID"] ?></td>
+                <td class="runner-table-name"><?= $runner["Name"] ?></td>
+                <td class="runner-table-tel"><?= $runner["Tel"] ?></td>
+                <td class="runner-table-email"><?= $runner["Email"] ?></td>
+                <td class="runner-table-platform"><?= $runner["Platform"] ?></td>
+                <td class="runner-table-status"><?= $runner["Status"] ?></td>
+                <td class="runner-table-actions">
+                  <div class="runner-opts-container">
+                    <div class="opt-edit">
+                      <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+                        <input type="hidden" name="runnerIdToEdit" value="<?= $runner['ID']?>"/>
+                        <?php if($runner['Status'] === "Active"): ?>
+                          <input type="submit" value="🔒 Disable"/>
+                        <?php else: ?>
+                          <input type="submit" value="🔓 Activate"/>
+                        <?php endif; ?>
+                      </form>
+                    </div>
+                    <div class="opt-delete">
+                      <form class="del-ru" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+                        <input type="hidden" name="runnerIdToDel" value="<?= $runner['ID']?>"/>
+                        <input type="submit" value="⛔ Delete"/>
+                      </form>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            <?php $runnerNo++; endforeach; ?>
           </tbody>
         </table>
       </div>

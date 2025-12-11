@@ -109,9 +109,10 @@ CREATE TABLE IF NOT EXISTS `runners` (
   `ID` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
   `Name` varchar(255) NOT NULL,
-  `Tel` int(11) NOT NULL,
+  `Tel` varchar(11) NOT NULL,
   `Email` varchar(255) NOT NULL,
-  `Platform` enum('Grab','Food Panda') NOT NULL
+  `Platform` enum('Grab','Food Panda') NOT NULL,
+  `Status` enum('Active', 'Disabled') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

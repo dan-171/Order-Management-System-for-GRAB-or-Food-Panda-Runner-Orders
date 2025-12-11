@@ -8,8 +8,10 @@
   $staffIdToEdit = null;
   $idToDel = null;
   $msg = $_SESSION['msg'] ?? null;
+  //disable/activate runner
+  $runnerStatus = null;
 
-  if(isset($_SESSION['staffIdToEdit'])){ //fetch id to edit to switch into edit mode
+  if(isset($_SESSION['staffIdToEdit'])){ //fetch id to edit to switch into staff edit mode
     $editing = true;
     $staffIdToEdit = $_SESSION['staffIdToEdit'];
   }
@@ -38,10 +40,18 @@
       }
       else
         $_SESSION["msg"] = "Staff account creation failed - Password cannot be left blank!";
-    }else if(isset($_POST["idToDel"])){ //del staff
+    }else if(isset($_POST["idToDel"])){ //del staff or runner
       $idToDel = $_POST["idToDel"];
-      $delStaff = $pdo->prepare("DELETE FROM staff WHERE ID = ?");
-      $delStaff->execute([$idToDel]);
+      if($_POST["type"] === "staff")
+        $delAcc = $pdo->prepare("DELETE FROM staff WHERE ID = ?");
+      else if($_POST["type"] === "runner")
+        $delAcc = $pdo->prepare("DELETE FROM runners WHERE ID = ?");
+      $delAcc->execute([$idToDel]);
+    }else if(isset($_POST["runnerIdToEdit"])){ //disable/activate runner
+      $runnerId = $_POST["runnerIdToEdit"];
+      $runnerStatus = ($_POST["runnerStatus"] === "Active") ? "Disabled" : "Active";
+      $updateRunner = $pdo->prepare("UPDATE runners SET Status = ? WHERE ID = ?");
+      $updateRunner->execute([$runnerStatus, $runnerId]);
     }
     header("Location:" . $_SERVER['PHP_SELF']);
     exit;
@@ -121,8 +131,9 @@
                     </form>
                   </div>
                   <div class="opt-delete">
-                    <form class="del-staff" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+                    <form class="del-acc" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
                       <input type="hidden" name="idToDel" value="<?= $staff['ID']?>"/>
+                      <input type="hidden" name="type" value="staff">
                       <input type="submit" value="⛔ Delete"/>
                     </form>
                   </div>
@@ -173,6 +184,7 @@
                     <div class="opt-edit">
                       <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
                         <input type="hidden" name="runnerIdToEdit" value="<?= $runner['ID']?>"/>
+                        <input type="hidden" name="runnerStatus" value="<?= $runner['Status']?>"/>
                         <?php if($runner['Status'] === "Active"): ?>
                           <input type="submit" value="🔒 Disable"/>
                         <?php else: ?>
@@ -181,8 +193,9 @@
                       </form>
                     </div>
                     <div class="opt-delete">
-                      <form class="del-ru" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
-                        <input type="hidden" name="runnerIdToDel" value="<?= $runner['ID']?>"/>
+                      <form class="del-acc" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+                        <input type="hidden" name="type" value="runner">
+                        <input type="hidden" name="idToDel" value="<?= $runner['ID']?>"/>
                         <input type="submit" value="⛔ Delete"/>
                       </form>
                     </div>
@@ -218,11 +231,12 @@
     alert("<?= $msg ?>");
   <?php endif; ?>
 
-  //staff delete confirmation popup
-  const delStaffs = document.querySelectorAll(".del-staff").forEach(function(delStaff){
-    delStaff.addEventListener("submit", function(e){
-      let idToDel = delStaff.idToDel.value;
-      if(!confirm("⛔ Delete staff account " + idToDel + "?"))
+  //staff & runner delete confirmation popup
+  document.querySelectorAll(".del-acc").forEach(function(delAcc){
+    delAcc.addEventListener("submit", function(e){
+      const idToDel = delAcc.idToDel.value;
+      const type = delAcc.type.value;
+      if(!confirm("⛔ Delete " + type + " account " + idToDel + "?"))
         e.preventDefault();
       return;
     })

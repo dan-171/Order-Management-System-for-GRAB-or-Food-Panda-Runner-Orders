@@ -77,7 +77,7 @@
 
 <!-- staff -->
 <div id="staff-panel">
-  <div id="staff-title"><h2>Staff</h2></div>
+  <div class="title"><h2>Staff</h2></div>
   <div id="create-staff-acc">
     <?php if(!$editing): ?>
       <h3>Create Staff Account</h3>
@@ -149,7 +149,7 @@
 
 <!-- runner -->
 <div id="runner-panel">
-  <div id="runner-title"><h2>Runners</h2></div>
+  <div class="title"><h2>Runners</h2></div>
   <div id="runner-list">
     <?php if (!$runners): ?>
       <p>No runner account has been created yet.</p>

@@ -2,20 +2,6 @@
   margin-bottom: 20px;
 }
 
-#staff-title,
-#runner-title{
-  color: #fff;
-  background-color: #000;
-  padding: 5px 20px;
-  margin-bottom: 10px;
-  border-left: double 10px rgb(244, 246, 249);
-}
-
-#staff-title h2,
-#runner-title h2{
-  margin: 0;
-}
-
 #create-staff-acc, #staff-list, 
 #runner-list {
   padding: 0 20px;

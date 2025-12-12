@@ -1,6 +1,84 @@
 <?php
   session_start();
   include '../../config.php';
+
+  //add or update staff
+  $editing = false;
+  $staffIdToEdit = null;
+  $idToDel = null;
+  $msg = $_SESSION['msg'] ?? null;
+  //disable/activate runner
+  $runnerStatus = null;
+
+  if(isset($_SESSION['staffIdToEdit'])){ //fetch id to edit to switch into staff edit mode
+    $editing = true;
+    $staffIdToEdit = $_SESSION['staffIdToEdit'];
+  }
+
+  //cpw msg
+  $cpwMsg = $_SESSION["cpwMsg"] ?? null;
+  unset($_SESSION["cpwMsg"]);
+
+  //fetch admin current pw
+  $fetchAdmin = $pdo->prepare("SELECT * FROM admin WHERE ID = ?");
+  $fetchAdmin->execute([$_SESSION['user']['id']]);
+  $admin = $fetchAdmin->fetch(PDO::FETCH_ASSOC); 
+
+  if($_SERVER["REQUEST_METHOD"] === "POST"){
+    // staff/runner acc
+    if (isset($_POST['staffIdToEdit'])) //switch to edit staff mode
+      $_SESSION["staffIdToEdit"] = $_POST["staffIdToEdit"];
+    else if(isset($_POST["updateStaffBtn"])){ //update staff
+      if(isset($_POST['staffPw'])){
+        $staffPw = password_hash(trim($_POST["staffPw"]), PASSWORD_DEFAULT);
+        $updateStaff = $pdo->prepare("UPDATE staff SET Password = ? WHERE ID = ?");
+        $updateStaff->execute([$staffPw, $staffIdToEdit]);
+        unset($_SESSION["staffIdToEdit"]);
+        $_SESSION["msg"] = "✅ Staff {$staffIdToEdit} updated successfully!";
+      }
+      else
+        $_SESSION["msg"] = "Update failed - Password cannot be left blank!";
+    }else if(isset($_POST["cancelStaffEditBtn"])){ //cancel staff edit
+      unset($_SESSION["staffIdToEdit"]);
+    }else if(isset($_POST["createStaffBtn"])){ //new staff
+      if(isset($_POST["staffPw"])){
+        $staffId = trim($_POST["staffId"]);
+        $staffPw = password_hash(trim($_POST["staffPw"]), PASSWORD_DEFAULT);
+        $newStaff = $pdo->prepare("INSERT INTO staff(ID, Password) VALUES(?, ?)");
+        $newStaff->execute([$staffId, $staffPw]);
+      }
+      else
+        $_SESSION["msg"] = "Staff account creation failed - Password cannot be left blank!";
+    }else if(isset($_POST["idToDel"])){ //del staff or runner
+      $idToDel = $_POST["idToDel"];
+      if($_POST["type"] === "staff")
+        $delAcc = $pdo->prepare("DELETE FROM staff WHERE ID = ?");
+      else if($_POST["type"] === "runner")
+        $delAcc = $pdo->prepare("DELETE FROM runners WHERE ID = ?");
+      $delAcc->execute([$idToDel]);
+    }else if(isset($_POST["runnerIdToEdit"])){ //disable/activate runner
+      $runnerId = $_POST["runnerIdToEdit"];
+      $runnerStatus = ($_POST["runnerStatus"] === "Active") ? "Disabled" : "Active";
+      $updateRunner = $pdo->prepare("UPDATE runners SET Status = ? WHERE ID = ?");
+      $updateRunner->execute([$runnerStatus, $runnerId]);
+    }
+    
+    //admin acc
+    if (isset($_POST["currPw"]) && isset($_POST["newPw"]) && isset($_POST["newPwRe"])) { //prevent empty entry;
+      var_dump($_POST["currPw"]);
+      if (password_verify(trim($_POST["currPw"]), $admin["Password"])){ //check if curr pw matches that in db
+        if($_POST["newPw"] === $_POST["newPwRe"]){ //check if new pw = new pw retyped
+          $newPw = password_hash(trim($_POST["newPw"]), PASSWORD_DEFAULT);
+          $updatePw = $pdo->prepare("UPDATE admin SET Password = ? WHERE ID = ?");
+          $updatePw->execute([$newPw, $_SESSION["user"]["id"]]);
+          $_SESSION['cpwDone'] = true;
+        }else $_SESSION["cpwMsg"] = "Your retyped password doesn’t match. Please try again";
+      }else $_SESSION["cpwMsg"] = "Your current password doesn't match. Please try again";
+    }else $_SESSION["cpwMsg"] = "Please fill in all required fields.";
+    
+    header("Location:" . $_SERVER['PHP_SELF']);
+    exit;
+  }
 ?>
 
 <!DOCTYPE html>
@@ -18,6 +96,7 @@
   <link rel="stylesheet" href="../../css/common.css">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="css/aAccount.css">
+  <link rel="stylesheet" href="css/aChangePW.css">
 </head>
 <body>
   <nav id="menu-sidebar">

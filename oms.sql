@@ -418,7 +418,8 @@ ALTER TABLE orders
 ALTER TABLE order_items
   ADD PRIMARY KEY (ID),
   ADD KEY order_id (Order_ID),
-  ADD KEY item_id (Item_ID);
+  ADD KEY foodID (foodID);
+  ADD KEY beverage (beverageID);
 
 --
 -- Indexes for table runners

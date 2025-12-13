@@ -341,7 +341,7 @@ DROP TABLE IF EXISTS order_items;
 CREATE TABLE IF NOT EXISTS order_items (
   ID varchar(255) NOT NULL,
   Order_ID varchar(255) NOT NULL,
-  FoodID varchar(255)  DEFAULT NULL,
+  foodID varchar(255)  DEFAULT NULL,
   beverageID varchar(255) DEFAULT NULL,
   Quantity int(4) NOT NULL,
   Subtotal decimal(10,2) NOT NULL

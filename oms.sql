@@ -448,7 +448,7 @@ ALTER TABLE orders
 -- Constraints for table order_items
 --
 ALTER TABLE order_items
-  ADD CONSTRAINT beverageID FOREIGN KEY (beverageID) REFERENCES beverage (beverageID) ON DELETE CASCADE;
+  ADD CONSTRAINT beverageID FOREIGN KEY (beverageID) REFERENCES beverage (beverageID) ON DELETE CASCADE,
   ADD CONSTRAINT foodID FOREIGN KEY (foodID) REFERENCES food (foodID) ON DELETE CASCADE,
   ADD CONSTRAINT order_id FOREIGN KEY (Order_ID) REFERENCES orders (ID) ON DELETE CASCADE;
 COMMIT;

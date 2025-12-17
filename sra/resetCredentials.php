@@ -31,7 +31,7 @@ $returnToLoginLink = "{$role}/login.php";
 </div>
 <div id="user-details-box">
   <p>Please enter your following details</p>
-  <form  id = "user-details-form" method="post">
+  <form  id="user-details-form" method="post">
     <input type="email" id="email" name="email" placeholder="Email"/>
     <input id="pw-input" name="pw" type="password" placeholder="Password"/>
     <input id="id-input" name="id" type="id" placeholder="<?= ucfirst($role) ?> ID"/>

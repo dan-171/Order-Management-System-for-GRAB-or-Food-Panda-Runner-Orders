@@ -47,7 +47,24 @@
     <img src="../../images/grab-logo.webp" alt="grab"/>
     <img src="../../images/foodpanda-logo.webp" alt="grab"/>
   </div>
-
+  <div id="reg-box">
+    <p id="reg-text">Looking to be a rider?</p>
+    <a id="reg-link" href="register.php?role=runner">Sign Up Now</a>
+  </div>
   <script src="../sraLogin.js"></script>
 </body>
 </html>
+
+<script>
+  const regBox = document.getElementById("reg-box")
+  const regText = document.getElementById("reg-text");
+  const regLink = document.getElementById("reg-link");
+  regBox.addEventListener("mouseover", function hideTextShowLink (){
+    regText.classList.add("inactive");
+    regLink.classList.add("active");
+  })
+  regBox.addEventListener("mouseout", function hideTextShowLink (){
+    regText.classList.remove("inactive");
+    regLink.classList.remove("active");
+  })
+</script>

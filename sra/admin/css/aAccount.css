@@ -27,6 +27,8 @@
 #runner-table-wrapper{
   max-height: 350px;
   max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
   overflow-y: auto;
   overflow-x: auto;
 }
@@ -34,8 +36,6 @@
 #staff-table,
 #runner-table{
   border-collapse: collapse;
-  border-radius: 10px 10px 0 0;
-  overflow: hidden;
   width: 100%;
   text-align: center;
 }

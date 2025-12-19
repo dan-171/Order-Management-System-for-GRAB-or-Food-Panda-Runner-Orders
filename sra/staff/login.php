@@ -3,13 +3,16 @@
   $_SESSION["userType"] = "staff";
   include "../../config.php";
 
-  $error = $_SESSION["error"] ?? "";
-  unset($_SESSION["error"]);
+  $msg = $_SESSION["msg"] ?? "";
+  unset($_SESSION["msg"]);
   
   if($_SERVER["REQUEST_METHOD"] == "POST"){
-      $id = $_POST["id"];
-      $pw = $_POST["pw"];
+    $id = $_POST["id"];
+    $pw = $_POST["pw"];
 
+    if (empty($id)) $_SESSION["msg"] = "ID cannot be left blank";
+    else if (empty($pw)) $_SESSION["msg"] = "Password cannot be left blank";
+    else {
       $stmt = $pdo->prepare("SELECT * FROM staff WHERE Id = ?");
       $stmt->execute([$id]);
       $user = $stmt->fetch();
@@ -19,11 +22,10 @@
         ];
         header("Location: staff.php");
         exit;
-      } else {
-        $_SESSION["error"] = "❌ Invalid credentials";
-        header("Location: " . $_SERVER["PHP_SELF"]);
-        exit;
-      }
+      } else $_SESSION["msg"] = "❌ Invalid credentials";
+    }
+    header("Location: " . $_SERVER["PHP_SELF"]);
+    exit;
   }
 ?>
 
@@ -43,7 +45,7 @@
     </form>
     <a id="reset-credentials" href="../resetCredentials.php?role=staff">Forgot ID or Password</a>
   </div>
-  <p id="err-msg"><?= $error?></p>
+  <p id="err-msg"><?= $msg?></p>
 
   <script src="../sraLogin.js"></script>
 </body>

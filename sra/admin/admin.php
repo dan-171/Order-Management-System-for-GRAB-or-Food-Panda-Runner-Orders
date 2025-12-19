@@ -29,26 +29,26 @@
     if (isset($_POST['staffIdToEdit'])) //switch to edit staff mode
       $_SESSION["staffIdToEdit"] = $_POST["staffIdToEdit"];
     else if(isset($_POST["updateStaffBtn"])){ //update staff
-      if(isset($_POST['staffPw'])){
+      if(empty(trim($_POST['staffPw'])))
+        $_SESSION["msg"] = "Update failed - Password cannot be left blank!";
+      else{
         $staffPw = password_hash(trim($_POST["staffPw"]), PASSWORD_DEFAULT);
         $updateStaff = $pdo->prepare("UPDATE staff SET Password = ? WHERE ID = ?");
         $updateStaff->execute([$staffPw, $staffIdToEdit]);
         unset($_SESSION["staffIdToEdit"]);
         $_SESSION["msg"] = "✅ Staff {$staffIdToEdit} updated successfully!";
       }
-      else
-        $_SESSION["msg"] = "Update failed - Password cannot be left blank!";
     }else if(isset($_POST["cancelStaffEditBtn"])){ //cancel staff edit
       unset($_SESSION["staffIdToEdit"]);
     }else if(isset($_POST["createStaffBtn"])){ //new staff
-      if(isset($_POST["staffPw"])){
+      if(empty(trim($_POST["staffPw"])))
+        $_SESSION["msg"] = "Staff account creation failed - Password cannot be left blank!";
+      else{
         $staffId = trim($_POST["staffId"]);
         $staffPw = password_hash(trim($_POST["staffPw"]), PASSWORD_DEFAULT);
         $newStaff = $pdo->prepare("INSERT INTO staff(ID, Password) VALUES(?, ?)");
         $newStaff->execute([$staffId, $staffPw]);
       }
-      else
-        $_SESSION["msg"] = "Staff account creation failed - Password cannot be left blank!";
     }else if(isset($_POST["idToDel"])){ //del staff or runner
       $idToDel = $_POST["idToDel"];
       if($_POST["type"] === "staff")
@@ -64,8 +64,10 @@
     }
     
     //admin acc
-    if (isset($_POST["currPw"]) && isset($_POST["newPw"]) && isset($_POST["newPwRe"])) { //prevent empty entry;
-      var_dump($_POST["currPw"]);
+    //prevent empty entry;
+    if (empty(trim($_POST["currPw"])) || empty(trim(($_POST["newPw"]))) && empty(trim(isset($_POST["newPwRe"]))))
+      $_SESSION["cpwMsg"] = "Please fill in all required fields.";
+    else{
       if (password_verify(trim($_POST["currPw"]), $admin["Password"])){ //check if curr pw matches that in db
         if($_POST["newPw"] === $_POST["newPwRe"]){ //check if new pw = new pw retyped
           $newPw = password_hash(trim($_POST["newPw"]), PASSWORD_DEFAULT);
@@ -74,7 +76,7 @@
           $_SESSION['cpwDone'] = true;
         }else $_SESSION["cpwMsg"] = "Your retyped password doesn’t match. Please try again";
       }else $_SESSION["cpwMsg"] = "Your current password doesn't match. Please try again";
-    }else $_SESSION["cpwMsg"] = "Please fill in all required fields.";
+    }
     
     header("Location:" . $_SERVER['PHP_SELF']);
     exit;

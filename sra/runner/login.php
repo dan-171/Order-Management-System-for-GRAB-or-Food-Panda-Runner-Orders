@@ -5,6 +5,9 @@
   $msg = $_SESSION["msg"] ?? "";
   unset($_SESSION["msg"]);
   
+  $regSuccess = $_SESSION["regSuccess"] ?? "";
+  unset($_SESSION["regSuccess"]);
+
   if($_SERVER["REQUEST_METHOD"] == "POST"){
     $id = trim($_POST["id"]);
     $pw = trim($_POST["pw"]);
@@ -12,7 +15,7 @@
     if (empty($id)) $_SESSION["msg"] = "ID cannot be left blank";
     else if (empty($pw)) $_SESSION["msg"] = "Password cannot be left blank";
     else {
-      $stmt = $pdo->prepare("SELECT * FROM runners WHERE Id = ?");
+      $stmt = $pdo->prepare("SELECT * FROM runners WHERE ID = ?");
       $stmt->execute([$id]);
       $user = $stmt->fetch();
       if ($user && password_verify($pw, $user["Password"])){
@@ -72,4 +75,8 @@
     regText.classList.remove("inactive");
     regLink.classList.remove("active");
   })
+
+  <?php if($regSuccess): ?>
+    alert("<?= "✅ Signed up successfully!" ?>");
+  <?php endif; ?>
 </script>

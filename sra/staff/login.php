@@ -13,7 +13,7 @@
     if (empty($id)) $_SESSION["msg"] = "ID cannot be left blank";
     else if (empty($pw)) $_SESSION["msg"] = "Password cannot be left blank";
     else {
-      $stmt = $pdo->prepare("SELECT * FROM staff WHERE Id = ?");
+      $stmt = $pdo->prepare("SELECT * FROM staff WHERE ID = ?");
       $stmt->execute([$id]);
       $user = $stmt->fetch();
       if ($user && password_verify($pw, $user["Password"])){

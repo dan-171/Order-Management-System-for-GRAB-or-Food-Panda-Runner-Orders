@@ -1,0 +1,133 @@
+h1 {
+  text-align: center;
+  margin-top: 5%;
+}
+
+#return{
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: #000;
+  transition: font-size 0.2s
+}
+
+#return:hover{
+  font-size: 1.015rem;
+}
+
+#reg-box{
+  display: grid;
+  margin: 20px auto;
+  grid-template-rows: 3rem 3rem 1fr;
+  padding: 30px;
+  width: 400px;
+  background-color: #fff;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.rf-pg{
+  display: none;
+}
+
+.rf-pg.active{
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#reg-form input{
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+#progress-bar-div{
+  padding: 0 30px;
+  position: relative;
+}
+
+#progress-bar{
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+#progress-bar::before{
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 1%;
+  transform: translateY(-50%);
+  height: 6px;
+  width: 95%;
+  background-color: #000;
+  z-index: 1;
+}
+
+.progress-step{
+  width: 2.25rem;
+  height: 2rem;
+  background-color: #000;
+  border-radius: 50%;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  transition: background-color 0.2s 0.2s;
+}
+
+.progress-step.active{
+  background-color: #ff0000;
+}
+
+.progress-step::before{
+  counter-increment: step;
+  z-index: 5;
+  color: #fff;
+}
+
+#id-input, #pw-input{
+  display: none;
+}
+
+#id-input.active, #pw-input.active{
+  display: inline-block;
+}
+
+#platform{
+  padding: 10px 5px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  /* color: rgba(0, 0, 0, 0.52); */
+}
+
+#runner-id{
+  font-family: "Montserrat", sans-serif;
+}
+
+.btn-row{
+  display: grid;
+  grid-template-columns: 47.5% 47.5%;
+  width: 100%;
+  gap: 5%;
+}
+
+.prev-btn, .next-btn, #submit-btn{
+  background-color: rgba(0,0,0,1.0);
+  color: #fff;
+}
+
+.prev-btn:hover, .next-btn:hover, #submit-btn:hover{
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.9);
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+#msg {
+  text-align: center;
+  color: rgb(255,0,0);
+}

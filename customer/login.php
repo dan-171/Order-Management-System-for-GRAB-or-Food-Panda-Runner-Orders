@@ -1,38 +1,27 @@
 <?php
-include 'db_connect.php';
+include '../config.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+	$username = $_POST['username'];
+	$password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT full_name, password FROM customer WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $stmt->store_result();
+	$stmt = $pdo->prepare("SELECT ID, Name, Password FROM members WHERE Username = ? AND Password = ?");
+	$stmt->execute([$username, $password]);
+	$member = $stmt->fetch();
     
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($full_name, $stored_password);
-        $stmt->fetch();
+	if ($member) {
+		$_SESSION['name'] = $member['Name'];
+		$_SESSION['username'] = $username;
+		$_SESSION['memberID'] = $member['ID'];
 
-        if ($password === $stored_password) {
-            // SAVE BOTH NAME AND UNIQUE USERNAME
-            $_SESSION['user_name'] = $full_name;
-            $_SESSION['username_unique'] = $username; // <--- ADD THIS LINE
-
-            echo "<script>
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    alert('Login Successful!');
-                    window.location.href = 'customerpage.php'; 
-                  </script>";
-            exit();
-        } else {
-            echo "<script>alert('Username or Password incorrect');</script>";
-        }
-    } else {
-        echo "<script>alert('Username or Password incorrect');</script>";
-    }
-    $stmt->close();
+		echo "<script>
+						sessionStorage.setItem('isLoggedIn', 'true');
+						alert('Login Successful!');
+						window.location.href = 'customerpage.php'; 
+					</script>";
+    exit();
+  } else echo "<script>alert('Username or Password incorrect');</script>";
 }
 ?>
 

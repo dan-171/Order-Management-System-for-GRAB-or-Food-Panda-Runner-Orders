@@ -1,14 +1,14 @@
 <?php
-include 'db_connect.php';
+include '../config.php';
 session_start();
 
 // Check login
-if (!isset($_SESSION['username_unique'])) {
-    header("Location: login.php");
-    exit();
+if (!isset($_SESSION['username'])) {
+	header("Location: login.php");
+	exit();
 }
 
-$currentUser = $_SESSION['username_unique'];
+$username = $_SESSION['username'];
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -16,32 +16,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newPassInput     = $_POST['new_password'];
     $confirmPassInput = $_POST['confirm_password'];
 
-    // 1. Get current password from DB
-    $stmt = $conn->prepare("SELECT password FROM customer WHERE username = ?");
-    $stmt->bind_param("s", $currentUser);
-    $stmt->execute();
-    $stmt->bind_result($dbPassword);
-    $stmt->fetch();
-    $stmt->close();
+    // get current password from DB
+    $stmt = $pdo->prepare("SELECT password FROM members WHERE Username = ?");
+    $stmt->execute([$username]);
+		$dbPassword = $stmt->fetchColumn();
 
-    // 2. Verify and Update
+    // verify and update
     if ($currentPassInput === $dbPassword) {
-        if ($newPassInput === $confirmPassInput) {
-            $updateStmt = $conn->prepare("UPDATE customer SET password = ? WHERE username = ?");
-            $updateStmt->bind_param("ss", $newPassInput, $currentUser);
-            
-            if ($updateStmt->execute()) {
-                echo "<script>alert('Password changed successfully!'); window.location.href='profile.php';</script>";
-            } else {
-                $message = "Error updating password.";
-            }
-            $updateStmt->close();
-        } else {
-            $message = "New passwords do not match.";
-        }
-    } else {
+			if ($newPassInput === $confirmPassInput) {
+				$updateStmt = $pdo->prepare("UPDATE members SET Password = ? WHERE Username = ?");
+				$updateStmt->execute([$newPassInput, $username]);	
+				if ($updateStmt)
+					echo "<script>alert('Password changed successfully!'); window.location.href='profile.php';</script>";
+				else
+					$message = "Error updating password.";
+			} else
+					$message = "New passwords do not match.";
+    } else
         $message = "Current password is incorrect.";
-    }
 }
 ?>
 

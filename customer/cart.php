@@ -1,25 +1,41 @@
 <?php
-include 'db_connect.php';
+include '../config.php';
 session_start();
 
-if (!isset($_SESSION['username_unique'])) { header("Location: login.php"); exit(); }
-$user = $_SESSION['username_unique'];
+if (!isset($_SESSION['username'])) { header("Location: login.php"); exit(); }
+$username = $_SESSION['username'];
 
-// FETCH ACTIVE CART ONLY (Status = 'cart')
+// fetch active order
 $cartTotal = 0;
-
-// NEW QUERY: Joins orders -> order_items -> food
-// We select 'oi.id' (the specific item ID) so we can delete/edit it later
-$sqlCart = "SELECT oi.id, f.name, f.price, oi.quantity 
-            FROM order_items oi 
-            JOIN orders o ON oi.order_id = o.order_id
-            JOIN food f ON oi.food_code = f.food_code 
-            WHERE o.username = ? AND o.status = 'cart'";
-
-$stmtCart = $conn->prepare($sqlCart);
-$stmtCart->bind_param("s", $user);
-$stmtCart->execute();
-$resCart = $stmtCart->get_result();
+$foodStmt = $pdo->prepare("
+	SELECT oi.ID, f.Name AS name, f.Type AS type, f.Price AS price, oi.Quantity AS quantity, oi.Subtotal AS subtotal
+	FROM order_items oi
+	JOIN orders o ON oi.Order_ID = o.ID
+	JOIN food f ON oi.foodID = f.foodID
+	WHERE o.Member_ID = (SELECT ID FROM members WHERE username = ?) AND o.Status = 'Cart'
+");
+$foodStmt->execute([$username]);
+$foodItems = $foodStmt->fetchAll(PDO::FETCH_ASSOC);
+$drinkStmt = $pdo->prepare("
+	SELECT oi.ID, d.Name AS name, d.hotPrice, d.coldPrice, oi.Type AS type, oi.Quantity AS quantity, oi.Subtotal AS subtotal
+	FROM order_items oi
+	JOIN orders o ON oi.Order_ID = o.ID
+	JOIN drinks d ON oi.drinkID = d.drinkID
+	WHERE o.Member_ID = (SELECT ID FROM members WHERE username = ?) AND o.Status = 'Cart'
+");
+$drinkStmt->execute([$username]);
+$drinkItems = $drinkStmt->fetchAll(PDO::FETCH_ASSOC);
+$addonStmt = $pdo->prepare("
+	SELECT oi.ID, a.Name AS name, a.Price AS price, oi.Quantity AS quantity, oi.Subtotal AS subtotal
+	FROM order_items oi
+	JOIN orders o ON oi.Order_ID = o.ID
+	JOIN addons a ON oi.addonID = a.addonID
+	WHERE o.Member_ID = (SELECT ID FROM members WHERE username = ?) AND o.Status = 'Cart'
+");
+$addonStmt->execute([$username]);
+$addonItems = $addonStmt->fetchAll(PDO::FETCH_ASSOC);
+// merge food, drinks, addons
+$cartItems = array_merge($foodItems, $drinkItems, $addonItems);
 ?>
 
 <!DOCTYPE html>
@@ -30,29 +46,37 @@ $resCart = $stmtCart->get_result();
 <body>
 
 <?php if(isset($_GET['msg']) && $_GET['msg'] == 'success'): ?>
-    <h3 style="color:green; text-align:center;">Purchase Successful! Check "Order Status" to track your delivery.</h3>
+  <h3 style="color:green; text-align:center;">Purchase Successful! Check "Order Status" to track your delivery.</h3>
 <?php endif; ?>
 
 <h2>Your Active Cart</h2>
-<table class="menuTable">
-    <tr><th>Item</th><th>Quantity</th><th>Price (RM)</th><th>Action</th></tr>
-    <?php
-    if ($resCart->num_rows > 0) {
-        while($row = $resCart->fetch_assoc()) {
-            $cost = $row['price'] * $row['quantity'];
-            $cartTotal += $cost;
-            echo "<tr>
-                    <td>{$row['name']}</td>
-                    <td>{$row['quantity']}</td>
-                    <td>" . number_format($cost, 2) . "</td>
-                    <td><a href='editCartItem.php?id={$row['id']}' class='navButton' style='padding:5px 10px; font-size:12px;'>Edit/Remove</a></td>
-                  </tr>";
-        }
-    } else {
-        echo "<tr><td colspan='4'>Cart is empty.</td></tr>";
-    }
-    ?>
-    <tr><th colspan="2">Total</th><th colspan="2">RM <?php echo number_format($cartTotal, 2); ?></th></tr>
+<table class="table-5col">
+	<tr>
+		<th>Item</th>
+		<th>Quantity</th>
+		<th>Price (RM)</th>
+		<th>Subtotal (RM)</th>
+		<th>Action</th></tr>
+	<?php
+		if (count($cartItems) > 0) {
+			foreach($cartItems as $cartItem){
+				if(isset($cartItem['type']) && ($cartItem['type'] === "Hot" || $cartItem['type'] === "Cold" || $cartItem['type'] === ""))
+					$price = ($cartItem['type'] === 'Hot') ? $cartItem['hotPrice'] : $cartItem['coldPrice'];
+				else
+					$price = $cartItem['price'];
+				$cartTotal += $cartItem['subtotal'];
+				echo "<tr>
+								<td>" . $cartItem['name'] . (!empty($cartItem['type']) ? " (" . $cartItem['type'] . ")" : '') . "</td>
+								<td>{$cartItem['quantity']}</td>
+								<td>{$price}</td>
+								<td>" . number_format($cartItem['subtotal'], 2) . "</td>
+								<td><a href='editCartItem.php?id={$cartItem['ID']}' class='navButton' style='padding:5px 10px; font-size:12px;'>Edit/Remove</a></td>
+							</tr>";
+			}
+		} else 
+				echo "<tr><td colspan='4'>Cart is empty.</td></tr>";
+  ?>
+  <tr><th colspan="1">Total</th><th colspan="4">RM <?php echo number_format($cartTotal, 2); ?></th></tr>
 </table>
 
 <div class="buttonContainer">

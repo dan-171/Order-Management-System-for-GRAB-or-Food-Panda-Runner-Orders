@@ -141,7 +141,7 @@ session_start();
         <ul>
             <li><a href="#top">Home</a></li>
 
-            <?php if (isset($_SESSION['user_name'])): ?>
+            <?php if (isset($_SESSION['name'])): ?>
                 <li><a href="cart.php">My Cart</a></li>
                 <li><a href="orderStatus.php">Order Status</a></li>
                 <li><a href="profile.php">My Profile</a></li>
@@ -152,8 +152,8 @@ session_start();
             <?php endif; ?>
         </ul>
 
-        <?php if (isset($_SESSION['user_name'])): ?>
-            <span class="welcome-msg">Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
+        <?php if (isset($_SESSION['name'])): ?>
+            <span class="welcome-msg">Welcome, <?php echo htmlspecialchars($_SESSION['name']); ?></span>
         <?php else: ?>
             <a href="login.php" class="login-btn">Log In</a>
         <?php endif; ?>
@@ -196,40 +196,40 @@ session_start();
     
     <section id="signatureDish">
         <h2>Signature Dish</h2>
-        <a href="signatureDishOrder.php">
-            <img src="menuPics/Slide3.jpeg">
+        <a href="order.php?category=Signature">
+            <img src="menuPics/Signature.jpeg">
             <span class="hoverText">Signature Dish</span>
         </a>
     </section>
     
     <section id="breakfast">
         <h2>Breakfast Set</h2>
-        <a href="breakfastOrder.php">
-            <img src="menuPics/Slide4.jpeg">
+        <a href="order.php?category=Breakfast">
+            <img src="menuPics/Breakfast.jpeg">
             <span class="hoverText">Breakfast Set</span>
         </a>
     </section>
     
     <section id="lunch">
         <h2>Lunch Set</h2>
-        <a href="lunchOrder.php">
-            <img src="menuPics/Slide6.jpeg">
+        <a href="order.php?category=Lunch">
+            <img src="menuPics/Lunch.jpeg">
             <span class="hoverText">Lunch Set</span>
         </a>
     </section>
     
     <section id="rotiCanai">
         <h2>Roti Canai</h2>
-        <a href="rotiCanaiOrder.php">
-            <img src="menuPics/Slide5.jpeg">
+        <a href="order.php?category=Roti">
+            <img src="menuPics/Roti.jpeg">
             <span class="hoverText">Roti Canai</span>
         </a>
     </section>
     
     <section id="ikan">
         <h2>Menu Ikan</h2>
-        <a href="ikanOrder.php">
-            <img src="menuPics/Slide7.jpeg">
+        <a href="order.php?category=Ikan">
+            <img src="menuPics/Ikan.jpeg">
             <span class="hoverText">Menu Ikan</span>
         </a>
     </section>
@@ -237,14 +237,14 @@ session_start();
     <section id="ala">
         <h2>Ala-Carte Menu</h2>
         <article>
-            <a href="alaOrder1.php">
-                <img src="menuPics/Slide8.jpeg">
+            <a href="order.php?category=Ala-Carte">
+                <img src="menuPics/Ala-Carte.jpeg">
                 <span class="hoverText">Ala-Carte Menu 1</span>
             </a>
         </article>
         <article>
-            <a href="alaOrder2.php">
-                <img src="menuPics/Slide9.jpeg">
+            <a href="order.php?category=Ala-Carte%202">
+                <img src="menuPics/Ala-Carte2.jpeg">
                 <span class="hoverText">Ala-Carte Menu 2</span>
             </a>
         </article>
@@ -252,24 +252,24 @@ session_start();
     
     <section id="westernFood">
         <h2>Western Food</h2>
-        <a href="westernFoodOrder.php">
-            <img src="menuPics/Slide10.jpeg">
+        <a href="order.php?category=Western">
+            <img src="menuPics/Western.jpeg">
             <span class="hoverText">Western Food</span>
         </a>
     </section>
     
     <section id="gorengGoreng">
         <h2>Goreng-Goreng</h2>
-        <a href="gorengGorengOrder.php">
-            <img src="menuPics/Slide11.jpeg">
+        <a href="order.php?category=Goreng-goreng">
+            <img src="menuPics/Goreng-goreng.jpeg">
             <span class="hoverText">Goreng-Goreng</span>
         </a>
     </section>
     
     <section id="drinks">
         <h2>Drinks</h2>
-        <a href="drinksOrder.php">
-            <img src="menuPics/Slide12.jpeg">
+        <a href="order.php?category=Drinks">
+            <img src="menuPics/Drinks.jpeg">
             <span class="hoverText">Drinks</span>
         </a>
     </section>

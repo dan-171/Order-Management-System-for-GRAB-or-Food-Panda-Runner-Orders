@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";      // Default XAMPP username
 $password = "";          // Default XAMPP password is empty
-$dbname = "oms"; // The database name you created
+$dbname = "oms2"; // The database name you created
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

@@ -1,37 +1,31 @@
 <?php
-include 'db_connect.php';
+include '../config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $new_pass = $_POST['new_password'];
-    $confirm_pass = $_POST['confirm_password'];
+	$username = $_POST['username'];
+	$email = $_POST['email'];
+	$new_pass = $_POST['new_password'];
+	$confirm_pass = $_POST['confirm_password'];
 
-    if ($new_pass !== $confirm_pass) {
-        echo "<script>alert('New passwords do not match!');</script>";
-    } else {
-        // Check if username and email match
-        $check = $conn->prepare("SELECT id FROM customer WHERE username = ? AND email = ?");
-        $check->bind_param("ss", $username, $email);
-        $check->execute();
-        $check->store_result();
+	if ($new_pass !== $confirm_pass) {
+		echo "<script>alert('New passwords do not match!');</script>";
+	} else {
+		// check if username and email match
+		$check = $pdo->prepare("SELECT ID FROM members WHERE Username = ? AND Email = ?");
+		$check->execute([$username, $email]);
+		$match = $check->fetch();
 
-        if ($check->num_rows > 0) {
-            // Update Password (PLAIN TEXT)
-            $update = $conn->prepare("UPDATE customer SET password = ? WHERE username = ? AND email = ?");
-            $update->bind_param("sss", $new_pass, $username, $email);
-
-            if ($update->execute()) {
-                echo "<script>alert('Password updated successfully!'); window.location.href='login.php';</script>";
-            } else {
-                echo "<script>alert('Error updating password.');</script>";
-            }
-            $update->close();
-        } else {
-            echo "<script>alert('Username and Email do not match our records.');</script>";
-        }
-        $check->close();
-    }
+		if ($match) {
+			// update password
+			$update = $pdo->prepare("UPDATE members SET Password = ? WHERE Username = ? AND Email = ?");
+			$update->execute([$new_pass, $username, $email]);
+			if ($update->execute())
+				echo "<script>alert('Password updated successfully!'); window.location.href='login.php';</script>";
+			else
+				echo "<script>alert('Error updating password.');</script>";
+		}else
+			echo "<script>alert('Username and Email do not match our records.');</script>";
+  }
 }
 ?>
 
@@ -63,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         var dotpos = emailID.lastIndexOf(".");
 
         if (atpos < 1 || ( dotpos - atpos < 2 )) {
-            alert("Please enter correct email ID");
+            alert("Please enter a valid email address");
             document.getElementById("email").focus();
             return false;
         }

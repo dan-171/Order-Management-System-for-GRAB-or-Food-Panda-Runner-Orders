@@ -407,7 +407,7 @@ CREATE TABLE IF NOT EXISTS `runners` (
   `Email` varchar(255) NOT NULL,
   `Platform` enum('Grab','Food Panda') NOT NULL,
   `Plate` varchar(10) NOT NULL,
-  `Status` enum('Active','Disabled') NOT NULL DEFAULT 'Active'
+  `Status` enum('Active', 'Inactive', 'Disabled') NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

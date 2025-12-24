@@ -16,7 +16,7 @@ $returnToLoginLink = "{$role}/login.php";
 </head>
 <body>
 <h1>Reset Credentials</h1>
-<a id="return" href="<?= $returnToLoginLink ?>">Return to Login</a>
+<a id="return" href="<?= htmlspecialchars($returnToLoginLink) ?>">Return to Login</a>
 <div id="forgot-box">
   <p>Choose one</p>
   <nav id="forgot-option-nav">
@@ -34,7 +34,7 @@ $returnToLoginLink = "{$role}/login.php";
   <form  id="user-details-form" method="post">
     <input type="email" id="email" name="email" placeholder="Email"/>
     <input id="pw-input" name="pw" type="password" placeholder="Password"/>
-    <input id="id-input" name="id" type="id" placeholder="<?= ucfirst($role) ?> ID"/>
+    <input id="id-input" name="id" type="id" placeholder="<?= ucfirst(htmlspecialchars($role)) ?> ID"/>
     <input id="submit-btn" type="submit">
   </form>
 </div>

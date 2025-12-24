@@ -43,7 +43,7 @@
     </form>
     <a id="reset-credentials" href="../resetCredentials.php?role=admin">Forgot ID or Password</a>
   </div>
-  <p id="err-msg"><?= $msg?></p>
+  <p id="err-msg"><?= htmlspecialchars($msg)?></p>
 
   <script src="../sraLogin.js"></script>
 </body>

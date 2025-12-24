@@ -15,6 +15,12 @@
     $staffIdToEdit = $_SESSION['staffIdToEdit'];
   }
 
+  $runnerToView = null;
+  if(isset($_SESSION['runnerToView'])){ //fetch more details for specified runner
+    $runnerToView = $_SESSION['runnerToView'];
+    unset($_SESSION['runnerToView']);
+  }
+
   //cpw msg
   $cpwMsg = $_SESSION["cpwMsg"] ?? null;
   unset($_SESSION["cpwMsg"]);
@@ -23,6 +29,59 @@
   $fetchAdmin = $pdo->prepare("SELECT * FROM admin WHERE ID = ?");
   $fetchAdmin->execute([$_SESSION['user']['id']]);
   $admin = $fetchAdmin->fetch(PDO::FETCH_ASSOC); 
+
+  $runners = [];
+  $searchError = "";
+
+  //restaurant panel
+  //fetch items
+  $fetchFood = $pdo->prepare("SELECT foodID AS ID, Category, Section, Type, Name, Price AS 'Price (RM)'FROM food");
+  $fetchFood->execute();
+  $foods = $fetchFood->fetchAll(PDO::FETCH_ASSOC);
+  $foodCat = array_values(array_unique(array_column($foods, 'Category')));
+
+  $fetchDrinks = $pdo->prepare("SELECT drinkID AS ID, Section, Name, hotPrice AS 'Price (RM)[Hot]', coldPrice AS 'Price (RM)[Cold]' FROM drinks");
+  $fetchDrinks->execute();
+  $drinks = $fetchDrinks->fetchAll(PDO::FETCH_ASSOC);
+
+  $fetchAddons = $pdo->prepare("SELECT addonID AS ID, Category, Section, Name, Price AS 'Price (RM)' FROM addons");
+  $fetchAddons->execute();
+  $addons = $fetchAddons->fetchAll(PDO::FETCH_ASSOC);
+  $addonCat = array_values(array_unique(array_column($addons, 'Category')));
+
+  $items = []; // for item table headers
+  $itemType = $_POST['itemType'] ?? $_GET['itemType'] ?? 'food';
+  $itemCat  = $_POST['itemCat']  ?? $_GET['itemCat']  ?? 'All';
+  $catForItems = [
+    "food" => $foodCat,
+    "addons" => $addonCat
+  ];
+  // category select
+  $catList = ($itemType !== "drinks") ? array_merge(['All'], $catForItems[$itemType] ?? []) : [];
+  // items for table
+  if ($itemType === "food")
+    $items = $foods;
+  elseif ($itemType === "drinks")
+    $items = $drinks;
+  elseif ($itemType === "addons")
+    $items = $addons;
+  else
+    $items = [];
+  // table headers
+  $itemKeys = !empty($items) ? array_keys($items[0]) : [];
+  // filter by category
+  $itemsByCat = [];
+  if ($itemCat === "All" || $itemType === "drinks")
+    $itemsByCat = $items;
+  else {
+    foreach ($items as $item) {
+      if (trim($item["Category"]) === trim($itemCat))
+          $itemsByCat[] = $item;
+    }
+  }
+
+  $itemUpdateMsg = $_SESSION['itemUpdateMsg'] ?? "";
+  unset ($_SESSION['itemUpdateMsg']);
 
   if($_SERVER["REQUEST_METHOD"] === "POST"){
     // staff/runner acc
@@ -56,13 +115,17 @@
       else if($_POST["type"] === "runner")
         $delAcc = $pdo->prepare("DELETE FROM runners WHERE ID = ?");
       $delAcc->execute([$idToDel]);
-    }else if(isset($_POST["runnerIdToEdit"])){ //disable/activate runner
+    }else if(isset($_POST["runnerIdToEdit"])){ //disable/activate runner acc
       $runnerId = $_POST["runnerIdToEdit"];
       $runnerStatus = ($_POST["runnerStatus"] === "Active") ? "Disabled" : "Active";
       $updateRunner = $pdo->prepare("UPDATE runners SET Status = ? WHERE ID = ?");
       $updateRunner->execute([$runnerStatus, $runnerId]);
-    }
-    
+    }else if(isset($_POST["runnerIdToView"])) {
+      $fetchRunnerToView = $pdo->prepare("SELECT * FROM runners WHERE ID = ?");
+      $fetchRunnerToView->execute([$_POST["runnerIdToView"]]);
+      $_SESSION["runnerToView"] = $fetchRunnerToView->fetch(PDO::FETCH_ASSOC);
+    } 
+
     //admin acc
     //prevent empty entry;
     if (empty(trim($_POST["currPw"])) || empty(trim(($_POST["newPw"]))) && empty(trim(isset($_POST["newPwRe"]))))
@@ -78,8 +141,69 @@
       }else $_SESSION["cpwMsg"] = "Your current password doesn't match. Please try again";
     }
     
+    //update food price
+    if (isset($_POST['updateItemsBtn'])) {
+      $updated = false;
+      if ($itemType === 'food' && isset($_POST['prices'])) {
+        $updateFood = $pdo->prepare("UPDATE food SET Price = ? WHERE foodID = ?");
+        foreach ($_POST['prices'] as $id => $price) {
+          $price = trim($price);
+          if ($price === '') continue;
+          if (!preg_match('/^\d+(\.\d{1,2})?$/', $price)) continue;
+          $updateFood->execute([$price, $id]);
+          $updated = true;
+        }
+      }
+      if ($itemType === 'addons' && isset($_POST['prices'])) {
+        $updateAddon = $pdo->prepare("UPDATE addons SET Price = ? WHERE addonID = ?");
+        foreach ($_POST['prices'] as $id => $price) {
+          $price = trim($price);
+          if ($price === '') continue;
+          if (!preg_match('/^\d+(\.\d{1,2})?$/', $price)) continue;
+          $updateAddon->execute([$price, $id]);
+          $updated = true;
+        }
+      }
+      if ($itemType === 'drinks') {
+        $updateDrink = $pdo->prepare("UPDATE drinks SET hotPrice = ?, coldPrice = ? WHERE drinkID = ?");
+        foreach ($_POST['pricesHot'] ?? [] as $id => $hotPrice) {
+          $hotPrice  = trim($hotPrice);
+          $coldPrice = trim($_POST['pricesCold'][$id] ?? '');
+          if ($hotPrice === '' && $coldPrice === '') continue;
+          if (($hotPrice !== '' && !preg_match('/^\d+(\.\d{1,2})?$/', $hotPrice)) ||($coldPrice !== '' && !preg_match('/^\d+(\.\d{1,2})?$/', $coldPrice))) 
+            continue;
+          $updateDrink->execute([$hotPrice === '' ? null : $hotPrice,$coldPrice === '' ? null : $coldPrice,$id]);
+          $updated = true;
+        }
+      }
+      if ($updated)
+        $_SESSION['itemUpdateMsg'] = "✅ Prices updated successfully!";
+      header("Location: " . $_SERVER['PHP_SELF'] . "?itemType=$itemType&itemCat=$itemCat");
+      exit;
+    }
+
     header("Location:" . $_SERVER['PHP_SELF']);
     exit;
+  }
+
+  if ($_SERVER['REQUEST_METHOD'] === "GET"){
+    // search runner
+    if(isset($_GET["rnameToSearch"])){
+      if(trim($_GET["rnameToSearch"]) !== "") {
+        $fetchSearchedRunner = $pdo->prepare("SELECT ID, Name, Status FROM runners WHERE Name LIKE ?");
+        $fetchSearchedRunner->execute(["%" . $_GET["rnameToSearch"] . "%"]);
+        $searchedRunners = $fetchSearchedRunner->fetchAll(PDO::FETCH_ASSOC);
+        if ($searchedRunners){
+          $_SESSION['searched_runners'] = $searchedRunners;
+          $runners = $searchedRunners;
+        }
+        else
+          $searchError = "No runner found with searched name.";
+      }else{
+        unset($_SESSION['searched_runners']);
+        $runners = [];
+      }
+    }
   }
 ?>
 
@@ -99,6 +223,7 @@
   <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="css/aAccount.css">
   <link rel="stylesheet" href="css/aChangePW.css">
+  <link rel="stylesheet" href="css/aRestaurant.css">
 </head>
 <body>
   <nav id="menu-sidebar">

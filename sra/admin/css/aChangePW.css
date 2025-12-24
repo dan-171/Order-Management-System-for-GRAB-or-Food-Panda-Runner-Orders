@@ -1,7 +1,9 @@
 #change-pw-panel{
   padding: 0 20px;
-  margin: 0 auto;
-  width: fit-content;
+  width: 100%;
+  height: 600px;
+  display: grid;
+  grid-template-rows: 80% 20%;
 }
 
 #cpw-form{
@@ -9,8 +11,12 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  width: 400px;
-  margin: 20px;
+  margin: auto auto;
+  padding: 50px;
+  background-color: #D3D3D3;
+  border: solid 4px rgba(84, 84, 84, 0.7);
+  border-radius: 10px;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 #cpw-form label{
@@ -39,4 +45,5 @@
 
 #cpw-msg{
   text-align: center;
+  color: rgba(255, 0, 0, 0.8);
 }

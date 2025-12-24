@@ -105,7 +105,7 @@
 </head>
 <body>
 <h1>Runner Sign Up</h1>
-<a id="return" href="<?= $returnToLoginLink ?>">Return to Login</a>
+<a id="return" href="<?= htmlspecialchars($returnToLoginLink) ?>">Return to Login</a>
 <div id="reg-box">
   <div id="progress-bar-div">
     <div id="progress-bar">
@@ -115,7 +115,7 @@
     </div>
   </div>
   <p>Please enter your following details</p>
-  <form  id = "reg-form" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+  <form  id = "reg-form" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
     <div class="rf-pg active" id="rf-pg1">
       <input type="text" id="rname" name="rname" placeholder="Name"/>
       <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" id="birth-date" name="birthDate" placeholder="Birth Date"/>
@@ -135,7 +135,7 @@
       </div>
     </div>
     <div class="rf-pg" id="rf-pg3">
-      <input id="runner-id" name="runnerId" type="text" value="Your Runner ID: <?= $newRunnerID ?>" readonly>
+      <input id="runner-id" name="runnerId" type="text" value="Your Runner ID: <?= htmlspecialchars($newRunnerID) ?>" readonly>
       <input type="email" id="email" name="email" placeholder="Email"/>
       <input type="password" id="pw" name="pw" placeholder="Password"/>
       <input type="password" id="pwRe" name="pwRe" placeholder="Confirm password"/>
@@ -146,7 +146,7 @@
     </div>
   </form>
 </div>
-<p id="msg"><?= $msg ?></p>
+<p id="msg"><?= htmlspecialchars($msg) ?></p>
 <script>
   //age limit
   const birthDate = document.getElementById("birth-date");

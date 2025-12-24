@@ -2,25 +2,55 @@
   margin-bottom: 30px;
 }
 
-#create-staff-acc, #staff-list, 
-#runner-list {
+#staff-edit, #staff-list, 
+#runner-panel-content{
   padding: 0 20px;
+}
+
+#staff-div {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  width: 100%;
+  min-height: 180px;
+  margin-bottom: 20px;
+}
+
+#staff-edit {
+  display: flex;
+  flex-flow: column wrap;
+  gap: 20px;
 }
 
 #staff-form {
   display: flex;
   flex-flow: row wrap;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
-#staff-form input{
+#staff-form-input-wrapper{
+  display: flex;
+  flex-flow: column wrap;
+  gap: 10px;
+}
+
+#staff-form label {
+  display: inline-block;
+  width: 100px;
+}
+
+#staff-form input, #runner-search-form input {
   padding: 5px;
 }
 
-#auto-gen {
-  font-size: 0.7rem;
+#staff-id, #staff-pw {
+  width: 200px;
+}
+
+#staff-edit-btns {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 20px;
 }
 
 #staff-table-wrapper,
@@ -37,7 +67,7 @@
 #runner-table{
   border-collapse: collapse;
   width: 100%;
-  text-align: center;
+  text-align: left;
 }
 
 #staff-table thead tr,
@@ -47,18 +77,18 @@
 }
 
 #staff-table thead tr th, #staff-table tbody tr td,
-#runner-table thead tr th, #runner-table thead tr td{
+#runner-table thead tr th, #runner-table tbody tr td {
   padding: 10px;
 }
 
 #staff-table tbody tr:nth-child(odd),
 #runner-table tbody tr:nth-child(odd) {
-  background-color: #D3D3D3;
+  background-color: #f9fafb;
 }
 
 #staff-table tbody tr:nth-child(even),
 #runner-table tbody tr:nth-child(even) {
-  background-color: #f9fafb;
+  background-color: #D3D3D3;
 }
 
 #runner-table tbody td{
@@ -75,6 +105,13 @@
   width: 80px;
 }
 
+#staff-table thead tr th:last-child,
+#staff-table tbody tr td:last-child,
+#runner-table thead th:last-child,
+#runner-table tbody td:last-child {
+  text-align: center;
+}
+
 #staff-id, .staff-table-no, .staff-table-staff-id,
 .runner-table-no, .runner-table-id, .runner-table-tel{
   font-family: "Montserrat", sans-serif;
@@ -83,36 +120,45 @@
 }
 
 .staff-table-actions,
-.runner-opts-container {
+.runner-table-actions {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
 }
 
-.runner-opts-container{
-  width: 250px;
+#runner-list {
+  margin-bottom: 30px;
 }
 
-.empty-div{
-  flex: 5;
+#runner-list-header {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.opt-edit, .opt-delete{
+#runner-search-form label{
+  display: inline-block;
+  width: 160px;
+}
+
+.opt-view, .opt-edit, .opt-delete {
   flex: 1;
 }
 
-.opt-edit input, .opt-delete input{
+.opt-view input, .opt-edit input, .opt-delete input {
   background:none;
   border:none;
   padding:0;
   font-size: 1.0rem;
 }
 
-.opt-edit input:visited, .opt-delete input:visited{
+.opt-view input:visited, .opt-edit input:visited, .opt-delete input:visited{
   color: #000;
 }
 
-.opt-edit input:hover{
+.opt-view input:hover, .opt-edit input:hover{
   cursor:pointer;
   color: rgba(3, 133, 205, 1);
 }

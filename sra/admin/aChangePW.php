@@ -1,13 +1,13 @@
 <div id="cpw-panel">
   <div class="title"><h2>Change Password</h2></div>
   <div id="change-pw-panel">
-    <form id="cpw-form" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+    <form id="cpw-form" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
       <label for="currPw">Current password: <input id="currPw" name="currPw" type="password"></label>
       <label for="newPw">New password: <input id="newPw" name="newPw" type="password"></label>
       <label for="newPwRe">Retype new password: <input id="newPwRe" name="newPwRe" type="password"></label>
       <input id="update-admin-btn" name="updateBtn" type="submit" value="Update"/>
     </form>
-    <div id="cpw-msg"><?= $cpwMsg ?></div>
+    <div id="cpw-msg"><?= htmlspecialchars($cpwMsg) ?></div>
   </div>
 </div>
 
@@ -29,7 +29,10 @@
     
     if(newPw !== newPwRe){ //check if new pw = new pw retyped
       e.preventDefault();
-      cpwMsg.textContent = "Your retyped password doesn’t match. Please try again.";
+      cpwForm.currPw.value = "";
+      cpwForm.newPw.value = "";
+      cpwForm.newPwRe.value = "";
+      cpwMsg.textContent = "Your retyped password doesn’t match.";
       cpwForm.newPw.focus();
       return;
     }

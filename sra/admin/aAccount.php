@@ -16,91 +16,120 @@
   $newStaffID = "S" . str_pad($maxID + 1, 2, "0", STR_PAD_LEFT);
 
   //fetch all runners
-  $fetchRunners = $pdo->prepare("SELECT * FROM runners ORDER BY CAST(SUBSTRING(ID,2) AS UNSIGNED)");
-  $fetchRunners->execute();
-  $runners = $fetchRunners->fetchAll(PDO::FETCH_ASSOC); 
+  if (isset($_SESSION['searched_runners'])){
+    $runners = $_SESSION['searched_runners'];
+  }
+  else if ($runners === []){
+    $fetchRunners = $pdo->prepare("SELECT ID, Name, Status FROM runners ORDER BY CAST(SUBSTRING(ID,2) AS UNSIGNED)");
+    $fetchRunners->execute();
+    $runners = $fetchRunners->fetchAll(PDO::FETCH_ASSOC); 
+  }
 ?>
 
 <!-- staff -->
 <div id="staff-panel">
   <div class="title"><h2>Staff</h2></div>
-  <div id="create-staff-acc">
+  <div id="staff-div">
+    
+    <div id="staff-edit">
     <?php if(!$editing): ?>
       <h3>Create Staff Account</h3>
     <?php else: ?>
       <h3>Edit Staff Account</h3>
     <?php endif; ?>
-    <form id="staff-form" method="post">
-      <div>
-        <?php if(!$editing): ?>
-          <label for="staff-id">ID: <input id="staff-id" name="staffId" type="text" value="<?= $newStaffID ?>" readonly></label>
-        <?php else: ?>
-          <label for="staff-id">ID: <input id="staff-id" name="staffId" type="text" value="<?= $staffIdToEdit ?>" readonly></label>
-        <?php endif; ?>
-        <p id="auto-gen">*ID is auto-generated incrementally </p>
-      </div>
-        <label for="staff-pw">Password: <input id="staff-pw" name="staffPw" type="password"/></label>
-        <?php if(!$editing): ?>
-          <input class="btn" type="submit" name="createStaffBtn" value="Create"/> <div id="msg"></div>
-        <?php else: ?>
-          <input class="btn" type="submit" name="updateStaffBtn" value="Update"/>
-          <input class="btn" type="submit" name="cancelStaffEditBtn" value="Cancel"/> <div id="msg"></div>
-          <div id="msg"></div>
-        <?php endif; ?>
-    </form>
-  </div>
-  <div id="staff-list">
-    <?php if (!$staffs): ?>
-      <p>No staff account has been created yet.</p>
-    <?php else: ?>
-      <h3>Staff Accounts</h3>
-      <div id="staff-table-wrapper">
-        <table id="staff-table">
-          <thead>
-            <tr>
-              <th>No.</th>
-              <th>ID</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach ($staffs as $staff): ?>
+      <form id="staff-form" method="post">
+        <div id="staff-form-input-wrapper">
+          <div>
+            <?php if(!$editing): ?>
+              <label for="staff-id">ID: </label>
+              <input id="staff-id" name="staffId" type="text" value="<?= $newStaffID ?>" readonly>
+            <?php else: ?>
+              <label for="staff-id">ID: </label>
+              <input id="staff-id" name="staffId" type="text" value="<?= $staffIdToEdit ?>" readonly>
+            <?php endif; ?>
+          </div>
+          <div>
+            <label for="staff-pw">Password: </label>
+            <input id="staff-pw" name="staffPw" type="password"/>
+          </div>
+        </div>
+        <div id="staff-edit-btns">
+          <?php if(!$editing): ?>
+            <input class="btn" type="submit" name="createStaffBtn" value="Create"/>
+          <?php else: ?>
+            <input class="btn" type="submit" name="updateStaffBtn" value="Update"/>
+            <input class="btn" type="submit" name="cancelStaffEditBtn" value="Cancel"/>
+          <?php endif; ?>
+        </div>
+      </form>
+      <div id="msg"></div>
+    </div>
+
+    <div id="staff-list">
+      <?php if (!$staffs): ?>
+        <p>No staff account has been created yet.</p>
+      <?php else: ?>
+        <h3>Staff Accounts</h3>
+        <div id="staff-table-wrapper">
+          <table id="staff-table">
+            <thead>
               <tr>
-                <td class="staff-table-no"><?= $staffNo ?></td>
-                <td class="staff-table-staff-id"><?= $staff['ID'] ?></td>
-                <td class="staff-table-actions">
-                  <div class="empty-div"></div>
-                  <div class="opt-edit">
-                    <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
-                      <input type="hidden" name="staffIdToEdit" value="<?= $staff['ID']?>"/>
-                      <input type="submit" value="✏️ Edit"/>
-                    </form>
-                  </div>
-                  <div class="opt-delete">
-                    <form class="del-acc" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
-                      <input type="hidden" name="idToDel" value="<?= $staff['ID']?>"/>
-                      <input type="hidden" name="type" value="staff">
-                      <input type="submit" value="⛔ Delete"/>
-                    </form>
-                  </div>
-                </td>
+                <th>No.</th>
+                <th>ID</th>
+                <th>Actions</th>
               </tr>
-            <?php $staffNo++; endforeach; ?>
-          </tbody>
-        </table>
-      </div>
-    <?php endif; ?>
+            </thead>
+            <tbody>
+              <?php foreach ($staffs as $staff): ?>
+                <tr>
+                  <td class="staff-table-no"><?= $staffNo ?></td>
+                  <td class="staff-table-staff-id"><?= $staff['ID'] ?></td>
+                  <td class="staff-table-actions">
+                    <div class="opt-edit">
+                      <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
+                        <input type="hidden" name="staffIdToEdit" value="<?= $staff['ID']?>"/>
+                        <input type="submit" value="✏️ Edit"/>
+                      </form>
+                    </div>
+                    <div class="opt-delete">
+                      <form class="del-acc" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
+                        <input type="hidden" name="idToDel" value="<?= $staff['ID']?>"/>
+                        <input type="hidden" name="type" value="staff">
+                        <?php if (!($editing && $staff['ID'] === $staffIdToEdit)): ?>
+                          <input type="submit" value="⛔ Delete"/>
+                        <?php endif; ?>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <?php $staffNo++; endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php endif; ?>
+    </div>
   </div>
 </div>
 
 <!-- runner -->
 <div id="runner-panel">
-  <div class="title"><h2>Runners</h2></div>
-  <div id="runner-list">
+  <div class="title">
+    <h2>Runners</h2>
+  </div>
+  <div id="runner-panel-content">
+    <div id="runner-list">
     <?php if (!$runners): ?>
       <p>No runner account has been created yet.</p>
     <?php else: ?>
-      <h3>Runner Accounts</h3>
+      <div id="runner-list-header">
+        <h3>Runner Accounts</h3>
+        <div id="runner-search">
+          <form id="runner-search-form" action="<?=  htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="get">
+            <label for="rname-to-search">Search by name: </label>
+            <input id="rname-to-search" name="rnameToSearch" type="text"/>
+          </form>
+        </div>
+      </div>
       <div id="runner-table-wrapper">
         <table id="runner-table">
           <thead>
@@ -108,9 +137,6 @@
               <th>No.</th>
               <th>ID</th>
               <th>Name</th>
-              <th>Tel</th>
-              <th>Email</th>
-              <th>Platform</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -118,39 +144,57 @@
           <tbody>
             <?php foreach ($runners as $runner): ?>
               <tr>
-                <td class="runner-table-no"><?= $runnerNo ?></td>
-                <td class="runner-table-id"><?= $runner["ID"] ?></td>
-                <td class="runner-table-name"><?= $runner["Name"] ?></td>
-                <td class="runner-table-tel"><?= $runner["Tel"] ?></td>
-                <td class="runner-table-email"><?= $runner["Email"] ?></td>
-                <td class="runner-table-platform"><?= $runner["Platform"] ?></td>
-                <td class="runner-table-status"><?= $runner["Status"] ?></td>
+                <td class="runner-table-no"><?= htmlspecialchars($runnerNo) ?></td>
+                <td class="runner-table-id"><?= htmlspecialchars($runner["ID"]) ?></td>
+                <td class="runner-table-name"><?= htmlspecialchars($runner["Name"]) ?></td>
+                <td class="runner-table-status"><?= htmlspecialchars($runner["Status"]) ?></td>
                 <td class="runner-table-actions">
-                  <div class="runner-opts-container">
-                    <div class="opt-edit">
-                      <form action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
-                        <input type="hidden" name="runnerIdToEdit" value="<?= $runner['ID']?>"/>
-                        <input type="hidden" name="runnerStatus" value="<?= $runner['Status']?>"/>
-                        <?php if($runner['Status'] === "Active"): ?>
-                          <input type="submit" value="🔒 Disable"/>
-                        <?php else: ?>
-                          <input type="submit" value="🔓 Activate"/>
-                        <?php endif; ?>
-                      </form>
-                    </div>
-                    <div class="opt-delete">
-                      <form class="del-acc" action="<?= $_SERVER["PHP_SELF"] ?>" method="post">
-                        <input type="hidden" name="type" value="runner">
-                        <input type="hidden" name="idToDel" value="<?= $runner['ID']?>"/>
-                        <input type="submit" value="⛔ Delete"/>
-                      </form>
-                    </div>
+                  <div class="opt-view">
+                    <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
+                      <input type="hidden" name="runnerIdToView" value="<?= htmlspecialchars($runner['ID'])?>"/>
+                      <input type="submit" value="📝 View More"/>
+                    </form>
+                  </div>
+                  <div class="opt-edit">
+                    <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
+                      <input type="hidden" name="runnerIdToEdit" value="<?= htmlspecialchars($runner['ID'])?>"/>
+                      <input type="hidden" name="runnerStatus" value="<?= htmlspecialchars($runner['Status'])?>"/>
+                      <?php if($runner['Status'] === "Active" || $runner['Status'] === "Inactive"): ?>
+                        <input type="submit" value="🔒 Disable"/>
+                      <?php else: ?>
+                        <input type="submit" value="🔓 Activate"/>
+                      <?php endif; ?>
+                    </form>
+                  </div>
+                  <div class="opt-delete">
+                    <form class="del-acc" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post">
+                      <input type="hidden" name="type" value="runner">
+                      <input type="hidden" name="idToDel" value="<?= htmlspecialchars($runner['ID'])?>"/>
+                      <input type="submit" value="⛔ Delete"/>
+                    </form>
                   </div>
                 </td>
               </tr>
             <?php $runnerNo++; endforeach; ?>
           </tbody>
         </table>
+      </div>
+    <?php endif; ?>
+    </div>
+    <?php if ($searchError !== ""): ?>
+      <div id="search-err"><?= $searchError ?></div>
+    <?php endif;?>
+    <?php if ($runnerToView): ?>
+      <div id="runner-details-wrapper">
+        <h3>Runner Details</h3>
+        <div id="runner-details">
+          <p><strong>ID:</strong> <?= htmlspecialchars($runnerToView["ID"]) ?></p>
+          <p><strong>Name:</strong> <?= htmlspecialchars($runnerToView["Name"]) ?></p>
+          <p><strong>Plate:</strong> <?= htmlspecialchars($runnerToView["Plate"]) ?></p>
+          <p><strong>Platform:</strong> <?= htmlspecialchars($runnerToView["Platform"]) ?></p>
+          <p><strong>Tel:</strong> <?= htmlspecialchars($runnerToView["Tel"]) ?></p>
+          <p><strong>Email:</strong> <?= htmlspecialchars($runnerToView["Email"]) ?></p>
+        </div>
       </div>
     <?php endif; ?>
   </div>

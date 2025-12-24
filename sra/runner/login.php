@@ -50,7 +50,7 @@
     </form>
     <a id="reset-credentials" href="../resetCredentials.php?role=runner">Forgot ID or Password</a>
   </div>
-  <p id="err-msg"><?= $msg?></p>
+  <p id="err-msg"><?= htmlspecialchars($msg)?></p>
   <div id="delivery-platforms">
     <img src="../../images/grab-logo.webp" alt="grab"/>
     <img src="../../images/foodpanda-logo.webp" alt="grab"/>
@@ -76,7 +76,7 @@
     regLink.classList.remove("active");
   })
 
-  <?php if($regSuccess): ?>
-    alert("<?= "✅ Signed up successfully!" ?>");
+  <?php if(isset($regSuccess) && $regSuccess): ?>
+    alert("✅ Signed up successfully!");
   <?php endif; ?>
 </script>

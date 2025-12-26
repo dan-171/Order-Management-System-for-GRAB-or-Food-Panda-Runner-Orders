@@ -33,7 +33,8 @@
   $runners = [];
   $searchError = "";
 
-  //restaurant panel
+  //restaurant
+  //item panel
   //fetch items
   $fetchFood = $pdo->prepare("SELECT foodID AS ID, Category, Section, Type, Name, Price AS 'Price (RM)'FROM food");
   $fetchFood->execute();
@@ -76,12 +77,19 @@
   else {
     foreach ($items as $item) {
       if (trim($item["Category"]) === trim($itemCat))
-          $itemsByCat[] = $item;
+        $itemsByCat[] = $item;
     }
   }
 
   $itemUpdateMsg = $_SESSION['itemUpdateMsg'] ?? "";
   unset ($_SESSION['itemUpdateMsg']);
+
+  //order panel
+  $fetchOrders = $pdo->prepare("SELECT ID, Type, Member_ID AS 'Member ID', Runner_ID AS 'Runner ID', Total_Amount AS 'Total (RM)', Status FROM orders WHERE Status != 'Cart' ORDER BY Order_Date");
+  $fetchOrders->execute();
+  $allOrders = $fetchOrders->fetchAll(PDO::FETCH_ASSOC);
+
+  $orderStatus  = $_GET['orderStatus']  ?? 'All';
 
   if($_SERVER["REQUEST_METHOD"] === "POST"){
     // staff/runner acc
@@ -128,7 +136,7 @@
 
     //admin acc
     //prevent empty entry;
-    if (empty(trim($_POST["currPw"])) || empty(trim(($_POST["newPw"]))) && empty(trim(isset($_POST["newPwRe"]))))
+    if (empty(trim($_POST["currPw"])) || empty(trim(($_POST["newPw"]))) && empty(trim(($_POST["newPwRe"]))))
       $_SESSION["cpwMsg"] = "Please fill in all required fields.";
     else{
       if (password_verify(trim($_POST["currPw"]), $admin["Password"])){ //check if curr pw matches that in db
@@ -202,9 +210,63 @@
       }else{
         unset($_SESSION['searched_runners']);
         $runners = [];
+      } 
+    } else if(isset($_GET["orderStatus"])){ //filter order list
+      if($_GET["orderStatus"] === "All")
+        $_SESSION['filteredOrders'] = $allOrders;
+      else{
+        $fetchOrdersByStatus = $pdo->prepare("SELECT ID, Type, Member_ID AS 'Member ID', Runner_ID AS 'Runner ID', Total_Amount AS 'Total (RM)', Status FROM orders WHERE Status = ? ORDER BY Order_Date");
+        $fetchOrdersByStatus->execute([$_GET["orderStatus"]]);
+        $_SESSION['filteredOrders'] = $fetchOrdersByStatus->fetchAll(PDO::FETCH_ASSOC);
+      }
+    } else if(isset($_GET["orderIdToView"])){ //selected order to view more details
+      $fetchedMoreOrderDetails = [
+        'Order' => [],
+        'Items' => []
+      ];
+      $fetchMoreOrderDetail = $pdo->prepare("SELECT o.ID, o.Type, o.Member_ID AS 'Member ID', o.Runner_ID AS 'Runner ID', 
+      o.Total_Amount AS 'Total (RM)', o.Status, o.Order_Date AS 'Order Date', o.Ready_Date AS 'Ready Date', 
+      o.PickedUp_Date AS 'Pickup Date', o.Delivered_Date AS 'Delivered Date', o.Payment_Method AS 'Payment Method',
+      oi.foodID AS 'Food ID', oi.drinkID AS 'Drink ID', oi.Type AS 'Item Type', oi.addonID AS 'Addon ID', oi.Quantity AS 'Quantity'
+      FROM orders o LEFT JOIN order_items oi ON o.ID = oi.Order_ID WHERE o.ID = ?");
+      $fetchMoreOrderDetail->execute([$_GET["orderIdToView"]]);
+      $fetchedOrderRows = $fetchMoreOrderDetail->fetchAll(PDO::FETCH_ASSOC);
+      if (!empty($fetchedOrderRows)){
+        $fetchedMoreOrderDetails['Order'] = [
+          'ID' => $fetchedOrderRows[0]['ID'],
+          'Order Type' => $fetchedOrderRows[0]['Type'],
+          'Member ID' => $fetchedOrderRows[0]['Member ID'],
+          'Runner ID' => $fetchedOrderRows[0]['Runner ID'],
+          'Total (RM)' => $fetchedOrderRows[0]['Total (RM)'],
+          'Status' => $fetchedOrderRows[0]['Status'],
+          'Order Date' => $fetchedOrderRows[0]['Order Date'],
+          'Ready Date' => $fetchedOrderRows[0]['Ready Date'],
+          'Pickup Date' => $fetchedOrderRows[0]['Pickup Date'],
+          'Delivered Date' => $fetchedOrderRows[0]['Delivered Date'],
+          'Payment Method' => $fetchedOrderRows[0]['Payment Method'],
+        ];
+
+        foreach ($fetchedOrderRows as $fetchedOrderRow) {
+          if ($fetchedOrderRow['Food ID'] === null && $fetchedOrderRow['Drink ID'] === null && $fetchedOrderRow['Addon ID'] === null)
+            continue;
+          $fetchedMoreOrderDetails['Items'][] = [
+            'Food ID' => $fetchedOrderRow['Food ID'],
+            'Drink ID' => $fetchedOrderRow['Drink ID'],
+            'Item Type' => $fetchedOrderRow['Item Type'],
+            'Addon ID' => $fetchedOrderRow['Addon ID'],
+            'Quantity' => $fetchedOrderRow['Quantity'],
+          ];
+        }
+      $_SESSION['orderToView'] = $fetchedMoreOrderDetails;
       }
     }
+    else if (!isset($_GET['orderStatus']) && !isset($_GET['orderIdToView']))
+      unset($_SESSION['filteredOrders']);
   }
+
+  $orders = $_SESSION['filteredOrders'] ?? $allOrders ?? null;
+  $orderToView = $_SESSION['orderToView'] ?? null;
+  $orderMsg = empty($orders) ? (empty($allOrders) ? "No orders have been made yet" : "No orders are in this stage") : "";
 ?>
 
 <!DOCTYPE html>

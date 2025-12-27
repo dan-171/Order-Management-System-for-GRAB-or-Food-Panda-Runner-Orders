@@ -73,13 +73,13 @@
   padding-top: 20px;
 }
 
-#reset-credentials{
+#forgot-credentials{
   text-decoration: none;
   color: #000;
   transition: font-size 0.2s ease;
 }
 
-#reset-credentials:hover, #register:hover {
+#forgot-credentials:hover, #register:hover {
   font-size: 1.015rem;
 }
 

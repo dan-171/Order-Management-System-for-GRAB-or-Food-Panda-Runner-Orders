@@ -2,6 +2,12 @@
   session_start();
   include '../../config.php';
 
+  // kick user back to login page if url directly entered
+  if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+    header("Location: login.php");
+    exit;
+  }
+
   //add or update staff
   $editing = false;
   $staffIdToEdit = null;

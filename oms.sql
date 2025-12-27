@@ -70,7 +70,8 @@ INSERT INTO `addons` (`addonID`, `Name`, `Category`, `Section`, `Price`, `Availa
 DROP TABLE IF EXISTS `admin`;
 CREATE TABLE IF NOT EXISTS `admin` (
   `ID` varchar(255) NOT NULL,
-  `Password` varchar(255) NOT NULL
+  `Password` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `admin` (
 --
 
 INSERT INTO `admin` (`ID`, `Password`) VALUES
-('admin', '$2y$10$BXALg81RUxnwHOHvXequH./3Ywqekr1n1vymKFoXpD3/kibBNd0SS');
+('admin', '$2y$10$BXALg81RUxnwHOHvXequH./3Ywqekr1n1vymKFoXpD3/kibBNd0SS', 'admin123@gmail.com');
 
 -- --------------------------------------------------------
 

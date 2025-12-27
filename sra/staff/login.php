@@ -43,7 +43,6 @@
         <input id="pw-input" type="password" name="pw" placeholder="Password">
         <button type="submit">Login</button>
     </form>
-    <a id="reset-credentials" href="../resetCredentials.php?role=staff">Forgot ID or Password</a>
   </div>
   <p id="err-msg"><?= htmlspecialchars($msg)?></p>
 

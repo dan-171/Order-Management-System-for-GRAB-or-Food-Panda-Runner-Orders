@@ -4,6 +4,12 @@
   $msg = $_SESSION["msg"] ?? "";
   unset($_SESSION["msg"]);
 
+  if(isset($_SESSION["forgotMsg"])){
+    $forgotMsg = $_SESSION["forgotMsg"];
+    echo "<script> alert(" . json_encode($forgotMsg) . "); </script>";
+    unset($_SESSION["forgotMsg"]);
+  }
+
   if($_SERVER["REQUEST_METHOD"] == "POST"){
       $id = $_POST["id"];
       $pw = $_POST["pw"];
@@ -17,6 +23,7 @@
       if ($user && password_verify($pw, $user["Password"])){
         $_SESSION["user"] = [
             "id" => $user["ID"],
+            "role" => "admin"
         ];
         header("Location: admin.php");
         exit;
@@ -41,7 +48,7 @@
         <input id="pw-input" type="password" name="pw" placeholder="Password">
         <button type="submit">Login</button>
     </form>
-    <a id="reset-credentials" href="../resetCredentials.php?role=admin">Forgot ID or Password</a>
+    <a id="forgot-credentials" href="../forgotCredentials.php?role=admin">Forgot ID or Password</a>
   </div>
   <p id="err-msg"><?= htmlspecialchars($msg)?></p>
 

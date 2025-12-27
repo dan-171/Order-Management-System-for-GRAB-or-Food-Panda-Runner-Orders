@@ -21,6 +21,7 @@
       if ($user && password_verify($pw, $user["Password"])){
         $_SESSION["user"] = [
             "id" => $user["ID"],
+            "role" => "runner"
         ];
         header("Location: runner.php");
         exit;
@@ -48,7 +49,7 @@
         <input id="pw-input" type="password" name="pw" placeholder="Password">
         <button type="submit">Login</button>
     </form>
-    <a id="reset-credentials" href="../resetCredentials.php?role=runner">Forgot ID or Password</a>
+    <a id="forgot-credentials" href="../forgotCredentials.php?role=runner">Forgot ID or Password</a>
   </div>
   <p id="err-msg"><?= htmlspecialchars($msg)?></p>
   <div id="delivery-platforms">

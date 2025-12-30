@@ -5,6 +5,12 @@
   $msg = $_SESSION["msg"] ?? "";
   unset($_SESSION["msg"]);
   
+  if(isset($_SESSION["forgotMsg"])){
+    $forgotMsg = $_SESSION["forgotMsg"];
+    echo "<script> alert(" . json_encode($forgotMsg) . "); </script>";
+    unset($_SESSION["forgotMsg"]);
+  }
+
   $regSuccess = $_SESSION["regSuccess"] ?? "";
   unset($_SESSION["regSuccess"]);
 

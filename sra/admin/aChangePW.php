@@ -1,3 +1,11 @@
+<?php if(!empty($_SESSION['cpwDone'])): ?>
+  <script>
+    localStorage.removeItem("activeAdminPanel");
+    alert("✅ Password changed successfully! Returning to login page...");
+    window.location.href = "login.php";
+  </script>
+<?php unset($_SESSION['cpwDone']); endif; ?>
+
 <div id="cpw-panel">
   <div class="title"><h2>Change Password</h2></div>
   <div id="change-pw-panel">
@@ -37,11 +45,5 @@
       return;
     }
   })
-
-  <?php if(!empty($_SESSION['cpwDone'])): ?>
-    alert("✅ Password changed successfully! Returning to login page...");
-    <?php unset($_SESSION['cpwDone']); ?>
-    window.location.href = "login.php";
-  <?php endif; ?>
 </script>
 

@@ -23,7 +23,7 @@
             "id" => $user["ID"],
             "role" => "runner"
         ];
-        header("Location: runner.php");
+        header("Location: runnerMain.html");
         exit;
       } else $_SESSION["msg"] = "❌ Invalid credentials";
     }

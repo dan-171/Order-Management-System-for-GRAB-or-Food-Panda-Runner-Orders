@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `admin` (
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`ID`, `Password`) VALUES
+INSERT INTO `admin` (`ID`, `Password`, `Email`) VALUES
 ('admin', '$2y$10$BXALg81RUxnwHOHvXequH./3Ywqekr1n1vymKFoXpD3/kibBNd0SS', 'admin123@gmail.com');
 
 -- --------------------------------------------------------

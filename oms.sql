@@ -416,7 +416,7 @@ CREATE TABLE IF NOT EXISTS `runners` (
 --
 
 INSERT INTO `runners` (`ID`, `Password`, `Name`, `BirthDate`, `Tel`, `Email`, `Platform`, `Plate`, `Status`) VALUES
-('R01', '$2y$10$J7eqvrcUYpPPjFDKfoYKy.waKLIqxertJC74KShL8m23YdEvrRApK', 'Alex Sambal', '1998-08-12', '+60 173576371', 'alex1998@gmail.com', 'Grab', 'MCQ7137', 'Active');
+('R01', '$2y$10$BXALg81RUxnwHOHvXequH./3Ywqekr1n1vymKFoXpD3/kibBNd0SS', 'Alex Sambal', '1998-08-12', '+60 173576371', 'alex1998@gmail.com', 'Grab', 'MCQ7137', 'Active');
 
 -- --------------------------------------------------------
 
@@ -435,7 +435,7 @@ CREATE TABLE IF NOT EXISTS `staff` (
 --
 
 INSERT INTO `staff` (`ID`, `Password`) VALUES
-('S01', '$2y$10$FZaqf0XJs/sH1fyqTZWK2e1k8LTlaU75eXtnR51sYI/DZkb5z7ck6');
+('S01', '$2y$10$BXALg81RUxnwHOHvXequH./3Ywqekr1n1vymKFoXpD3/kibBNd0SS');
 
 --
 -- Indexes for dumped tables

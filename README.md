@@ -30,13 +30,7 @@ p@ssword
 
 customer/member:
 
-M01
+Evilparsnips
 
 p@ssword
-
-
-
-
-
-
 

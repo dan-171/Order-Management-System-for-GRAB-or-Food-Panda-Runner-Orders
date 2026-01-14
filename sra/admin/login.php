@@ -5,9 +5,14 @@
   unset($_SESSION["msg"]);
 
   if(isset($_SESSION["forgotMsg"])){
-    $forgotMsg = $_SESSION["forgotMsg"];
-    echo "<script> alert(" . json_encode($forgotMsg) . "); </script>";
-    unset($_SESSION["forgotMsg"]);
+  $forgotMsg = $_SESSION["forgotMsg"];
+  $tempPW = $_SESSION["tempPW"] ?? "";
+  echo "<script> 
+  let msg = " . json_encode($forgotMsg) . ";
+  let tempPW = " . json_encode($tempPW) . ";
+  prompt(msg, tempPW); 
+  </script>";
+  unset($_SESSION["forgotMsg"]);
   }
 
   if($_SERVER["REQUEST_METHOD"] == "POST"){

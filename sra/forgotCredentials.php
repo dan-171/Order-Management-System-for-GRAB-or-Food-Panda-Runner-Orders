@@ -42,6 +42,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
       $updatePWToTemp = $pdo->prepare("UPDATE `$dbRole` SET Password = ? WHERE Email = ? AND ID = ?");
       $updatePWToTemp->execute([$hashedTempPW, $email, $id]);
       $_SESSION["forgotMsg"] = "Your temporary password is {$tempPW}\nPlease reset your password as soon as possible\nRedirecting to login...";
+      $_SESSION["tempPW"] = $tempPW;
     }
     header("Location: {$role}/login.php?role={$role}");
   } else{

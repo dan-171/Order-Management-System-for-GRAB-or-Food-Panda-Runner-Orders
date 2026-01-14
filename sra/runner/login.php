@@ -7,7 +7,12 @@
   
   if(isset($_SESSION["forgotMsg"])){
     $forgotMsg = $_SESSION["forgotMsg"];
-    echo "<script> alert(" . json_encode($forgotMsg) . "); </script>";
+    $tempPW = $_SESSION["tempPW"] ?? "";
+ echo "<script> 
+    let msg = " . json_encode($forgotMsg) . ";
+    let tempPW = " . json_encode($tempPW) . ";
+    prompt(msg, tempPW); 
+    </script>";
     unset($_SESSION["forgotMsg"]);
   }
 
@@ -29,7 +34,7 @@
             "id" => $user["ID"],
             "role" => "runner"
         ];
-        header("Location: runnerMain.html");
+        header("Location: runnerMain.php");
         exit;
       } else $_SESSION["msg"] = "❌ Invalid credentials";
     }
@@ -66,6 +71,8 @@
     <p id="reg-text">Looking to be a rider?</p>
     <a id="reg-link" href="register.php?role=runner">Sign Up Now</a>
   </div>
+  
+
   <script src="../sraLogin.js"></script>
 </body>
 </html>

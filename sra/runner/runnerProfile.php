@@ -131,6 +131,10 @@ include 'runnerHead.php';
                             </select>`}
                         </div>
                         <div class="form-group">
+                            <label>Plate Number:</label>
+                            <input type="text" id="editPlate" value="${runner.plate || ''}" class="edit-input">
+                        </div>
+                        <div class="form-group">
                             <label>Platform:</label>
                             <select id="editPlatform" class="edit-select">
                                 <option value="Grab" ${runner.platform === 'Grab' ? 'selected' : ''}>Grab Food</option>

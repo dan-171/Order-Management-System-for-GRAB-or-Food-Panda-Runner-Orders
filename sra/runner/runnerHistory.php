@@ -23,7 +23,7 @@
                         <strong>#${order.orderId}</strong>
                         <span>RM ${order.totalAmount}</span>
                     </div>
-                    <div style="font-size:12px; color: #888; margin-bottom:4px;">
+                    <div class="preview-row">
                         👤 ${order.customerName}<br>
                         📅 ${formatDateTime(order['dates.ordered'])}
                     </div>

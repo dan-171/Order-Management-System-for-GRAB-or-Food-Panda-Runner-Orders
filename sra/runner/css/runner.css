@@ -218,6 +218,7 @@ strong{
 .st-assigned { background: #2196f3; }
 .st-in_transit{ background: #9c27b0; }
 .st-delivered { background: #4caf50; }
+.st-completed { background: #2e7d32; }
 
 /* button */
 button { 

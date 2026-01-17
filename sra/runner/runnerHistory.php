@@ -12,8 +12,8 @@
               return;
 
             // Display logic
-            if (order.Status == "Delivered") {
-                const statusClass = 'st-delivered';
+            if (order.Status === "Delivered" || order.Status === "Completed") {
+                const statusClass = order.Status === 'Completed' ? 'st-completed' : 'st-delivered';
                 const div = document.createElement('div');
                 div.className = `order-card ${selectedOrderId === order.orderId ? 'selected' : ''}`;
                 div.onclick = () => { selectedOrderId = order.orderId; renderOrderList(); renderDetails(); };

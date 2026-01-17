@@ -12,7 +12,7 @@
               return;
 
             // Display logic
-            if (order.Status !== "Delivered") {
+            if (order.Status === "Readying Order" || order.Status === "In Transit")  {
                 const statusClass = order.Status === 'Readying Order' ? 'st-ready' : 'st-in_transit';
                 const div = document.createElement('div');
                 div.className = `order-card ${selectedOrderId === order.orderId ? 'selected' : ''}`;

@@ -40,31 +40,62 @@
   $searchError = "";
 
   //restaurant
+  //generate ID for new menu item
+  function generateNextId(PDO $pdo, string $table, string $column, string $prefix): string {
+    $stmt = $pdo->prepare("SELECT $column FROM $table ORDER BY $column DESC LIMIT 1");
+    $stmt->execute();
+    $lastId = $stmt->fetchColumn();
+    if ($lastId) {
+      $num = (int) substr($lastId, 1); // remove prefix
+      $num++;
+    } else
+      $num = 1;
+    return $prefix . str_pad($num, 3, '0', STR_PAD_LEFT);
+  }
+
   //item panel
   //fetch items
   $fetchFood = $pdo->prepare("SELECT foodID AS ID, Category, Section, Type, Name, Price AS 'Price (RM)'FROM food");
   $fetchFood->execute();
   $foods = $fetchFood->fetchAll(PDO::FETCH_ASSOC);
   $foodCat = array_values(array_unique(array_column($foods, 'Category')));
+  $foodSection = array_values(array_unique(array_column($foods, 'Section')));
+  $foodType = array_values(array_unique(array_column($foods, 'Type')));
 
   $fetchDrinks = $pdo->prepare("SELECT drinkID AS ID, Section, Name, hotPrice AS 'Price (RM)[Hot]', coldPrice AS 'Price (RM)[Cold]' FROM drinks");
   $fetchDrinks->execute();
   $drinks = $fetchDrinks->fetchAll(PDO::FETCH_ASSOC);
+  $drinksSection = array_values(array_unique(array_column($drinks, 'Section')));
 
   $fetchAddons = $pdo->prepare("SELECT addonID AS ID, Category, Section, Name, Price AS 'Price (RM)' FROM addons");
   $fetchAddons->execute();
   $addons = $fetchAddons->fetchAll(PDO::FETCH_ASSOC);
   $addonCat = array_values(array_unique(array_column($addons, 'Category')));
+  $addonSection = array_values(array_unique(array_column($addons, 'Section')));
 
   $items = []; // for item table headers
+  $itemTypeCM = $_GET['itemTypeCM'] ?? 'food';
   $itemType = $_POST['itemType'] ?? $_GET['itemType'] ?? 'food';
   $itemCat  = $_POST['itemCat']  ?? $_GET['itemCat']  ?? 'All';
+
   $catForItems = [
     "food" => $foodCat,
     "addons" => $addonCat
   ];
+
+  $sectionForItems = [
+    "food" => $foodSection,
+    "drinks" => $drinksSection,
+    "addons" => $addonSection
+  ];
+
   // category select
+  $catListCM = ($itemTypeCM !== "drinks") ? $catForItems[$itemTypeCM] ?? [] : [];
   $catList = ($itemType !== "drinks") ? array_merge(['All'], $catForItems[$itemType] ?? []) : [];
+
+  // section select
+  $sectionListCM = $sectionForItems[$itemTypeCM] ?? [];
+
   // items for table
   if ($itemType === "food")
     $items = $foods;
@@ -75,7 +106,7 @@
   else
     $items = [];
   // table headers
-  $itemKeys = !empty($items) ? array_keys($items[0]) : [];
+  $itemKeys = !empty($items) ? array_merge(array_keys($items[0]), [""]) : [];
   // filter by category
   $itemsByCat = [];
   if ($itemCat === "All" || $itemType === "drinks")
@@ -87,6 +118,8 @@
     }
   }
 
+  $itemCreateMsg = $_SESSION['itemCreateMsg'] ?? "";
+  unset ($_SESSION['itemCreateMsg']);
   $itemUpdateMsg = $_SESSION['itemUpdateMsg'] ?? "";
   unset ($_SESSION['itemUpdateMsg']);
 
@@ -154,8 +187,78 @@
         }else $_SESSION["cpwMsg"] = "Your retyped password doesn’t match. Please try again";
       }else $_SESSION["cpwMsg"] = "Your current password doesn't match. Please try again";
     }
-    
-    //update food price
+
+    //create menu
+    if (isset($_POST['createItemBtn'])) {
+      $itemTypeCM = $_POST['itemTypeCM'] ?? 'food';
+      $name       = trim($_POST['nameCM'] ?? '');
+      $section    = trim($_POST['itemSectionCM'] ?? '');
+      if ($name === '' || $section === '') {
+        $_SESSION['itemCreateMsg'] = "❌ Name and Section are required.";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+      }
+      if ($itemTypeCM === 'food') {
+        $category = trim($_POST['itemCatCM'] ?? '');
+        $type     = trim($_POST['foodTypeCM'] ?? null);
+        $price    = trim($_POST['priceCM'] ?? '');
+        if ($price === '' || !preg_match('/^\d+(\.\d{1,2})?$/', $price)) {
+          $_SESSION['itemCreateMsg'] = "❌ Invalid food price.";
+          header("Location: " . $_SERVER['PHP_SELF']);
+          exit;
+        }
+        $foodID = generateNextId($pdo, 'food', 'foodID', 'F');
+        $stmt = $pdo->prepare("INSERT INTO food (foodID, Category, Section, Type, Name, Price) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$foodID, $category, $section, $type !== '' ? $type : null, $name, $price]);
+      }
+      elseif ($itemTypeCM === 'drinks') {
+        $hot  = trim($_POST['hotPriceCM'] ?? '');
+        $cold = trim($_POST['coldPriceCM'] ?? '');
+        if ($hot === '' && $cold === '') {
+          $_SESSION['itemCreateMsg'] = "❌ At least one drink price is required.";
+          header("Location: " . $_SERVER['PHP_SELF']);
+          exit;
+        }
+        $hot  = $hot  !== '' && preg_match('/^\d+(\.\d{1,2})?$/', $hot)  ? $hot  : null;
+        $cold = $cold !== '' && preg_match('/^\d+(\.\d{1,2})?$/', $cold) ? $cold : null;
+        $drinkID = generateNextId($pdo, 'drinks', 'drinkID', 'B');
+        $stmt = $pdo->prepare("INSERT INTO drinks (drinkID, Section, Name, hotPrice, coldPrice) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$drinkID, $section, $name, $hot, $cold]);
+      }
+      elseif ($itemTypeCM === 'addons') {
+        $category = trim($_POST['itemCatCM'] ?? '');
+        $price    = trim($_POST['priceCM'] ?? '');
+        if ($price === '' || !preg_match('/^\d+(\.\d{1,2})?$/', $price)) {
+          $_SESSION['itemCreateMsg'] = "❌ Invalid addon price.";
+          header("Location: " . $_SERVER['PHP_SELF']);
+          exit;
+        }
+        $addonID = generateNextId($pdo, 'addons', 'addonID', 'A');
+        $stmt = $pdo->prepare("INSERT INTO addons (addonID, Category, Section, Name, Price)VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$addonID, $category, $section, $name, $price]);
+      }
+      $_SESSION['itemCreateMsg'] = "✅ Menu item created successfully!";
+      header("Location: " . $_SERVER['PHP_SELF'] . "?itemType=$itemTypeCM");
+      exit;
+    }
+
+    // delete item
+    if (isset($_POST['itemIdToDel'])) {
+      $id = $_POST['itemIdToDel'];
+      $type = $_POST['itemType'];
+      if ($type === "food")
+        $stmt = $pdo->prepare("DELETE FROM food WHERE foodID = ?");
+      elseif ($type === "drinks")
+        $stmt = $pdo->prepare("DELETE FROM drinks WHERE drinkID = ?");
+      elseif ($type === "addons")
+        $stmt = $pdo->prepare("DELETE FROM addons WHERE addonID = ?");
+      $stmt->execute([$id]);
+      $_SESSION['itemUpdateMsg'] = "✅ Item deleted successfully!";
+      header("Location: " . $_SERVER['PHP_SELF'] . "?itemType=" . $type);
+      exit;
+    }
+
+    //update item price
     if (isset($_POST['updateItemsBtn'])) {
       $updated = false;
       if ($itemType === 'food' && isset($_POST['prices'])) {

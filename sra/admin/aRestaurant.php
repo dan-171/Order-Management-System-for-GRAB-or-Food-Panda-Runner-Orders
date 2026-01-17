@@ -5,7 +5,75 @@
   <div id="restaurant-div">
     <div id="items-panel">
       <div class="title"><h2>Items</h2></div>
+        <div id="create-menu-panel">
+          <h3>Create Menu</h3>
+          <div id = "cm-forms">
+            <div id="cm-form-img-div">
+                <img id="cm-form-img" src="../../images/fnd.png" alt="food_n_drinks_img" loading="lazy"/>
+            </div>
+            <div id="cm-form-left">
+              <form id="cm-form-1" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="GET">
+                <div class="cm-field" id="cm-type-wrapper">
+                  <label class="cm-field-label">Item Type:</label>
+                  <select id="cm-select" name="itemTypeCM" onchange="this.form.submit()">
+                    <option value="food" <?= $itemTypeCM === 'food' ? 'selected' : '' ?>>Food</option>
+                    <option value="drinks" <?= $itemTypeCM === 'drinks' ? 'selected' : '' ?>>Drinks</option>
+                    <option value="addons" <?= $itemTypeCM === 'addons' ? 'selected' : '' ?>>Addons</option>
+                  </select>
+                </div>
+              </form>
+              <form id="cm-form-2" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                <input type="hidden" name="itemTypeCM" value="<?= htmlspecialchars($itemTypeCM) ?>">
+                <div class="cm-field" id="cm-cat-wrapper">
+                  <label class="cm-field-label">Category:</label>
+                  <select id="cm-select-cat" name="itemCatCM">
+                    <?php foreach ($catListCM as $cat): ?>
+                      <option value = "<?= htmlspecialchars($cat) ?>" <?= $cat === $itemCat ? 'selected' : '' ?>><?= htmlspecialchars($cat) ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <div class="cm-field" id="cm-section-wrapper">
+                  <label class="cm-field-label">Section:</label>
+                  <select id="cm-select-section" name="itemSectionCM">
+                    <?php foreach ($sectionListCM as $section): ?>
+                      <option value = "<?= htmlspecialchars($section) ?>"><?= htmlspecialchars($section) ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <div class="cm-field" id="cm-ftype-wrapper">
+                  <label class="cm-field-label" name="foodTypeCM">Type:</label>
+                  <select id="cm-select-type">
+                    <?php foreach ($foodType as $ft): ?>
+                      <option value = "<?= htmlspecialchars($ft) ?>"><?= htmlspecialchars($ft) ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+              </div>
+              <div id="cm-form-right">
+                <div class="cm-field" id="cm-name-wrapper">
+                  <label class="cm-field-label">Name:</label>
+                  <input type="text" id="cm-name" name="nameCM">
+                </div>
+                <div class="cm-field" id="cm-price-wrapper">
+                  <label class="cm-field-label">Price (RM):</label>
+                  <input type="text" id="cm-price" name="priceCM">
+                </div>
+                <div class="cm-field" id="cm-hot-wrapper">
+                  <label class="cm-field-label">Hot Price (RM):</label>
+                  <input type="text" id="cm-hot-price" name="hotPriceCM">
+                </div>
+                <div class="cm-field" id="cm-cold-wrapper">
+                  <label class="cm-field-label">Cold Price (RM):</label>
+                  <input type="text" id="cm-cold-price" name="coldPriceCM">
+                </div>
+                <input id="cm-btn" type="submit" value="Create" name="createItemBtn">
+              </div>
+            </form>
+          </div>
+          <p id="item-create-msg"><?= $itemCreateMsg ?></p>
+        </div>
       <div id="items-panel-content">
+        <h3>Menu</h3>
         <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="GET">
           <div id="items-type-div">
             <label for="item-type">Type: </label>
@@ -73,6 +141,11 @@
                         <td></td>
                       <?php endif; ?>
                     <?php endif; ?>
+                    <td>
+                      <div class="opt-delete">
+                        <input class="del-item" type="submit" form="delete-item-form" data-id="<?= $item['ID']?>" value="⛔ Delete"/>
+                      </div>
+                    </td>
                   </tr>
                   <?php endforeach; 
                     else: 
@@ -108,6 +181,11 @@
                           <td></td>
                           <?php endif; ?>
                         <?php endif; ?>
+                        <td>
+                          <div class="opt-delete">
+                            <input class="del-item" type="submit" form="delete-item-form" data-id="<?= $itemByCat['ID']?>" value="⛔ Delete"/>
+                          </div>
+                        </td>
                       </tr>
                   <?php endforeach;
                   endif; ?>
@@ -119,6 +197,10 @@
             <p><?=  htmlspecialchars($itemUpdateMsg) ?></p>
             <input id="update-items-btn" type="submit" name="updateItemsBtn" value="Update">
           </div>
+        </form>
+        <form id="delete-item-form" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+          <input type="hidden" name="itemType" value="<?= htmlspecialchars($itemType) ?>">
+          <input type="hidden" name="itemIdToDel" id="itemIdToDel">
         </form>
       </div>
     </div>
@@ -245,5 +327,113 @@
         orderDetailsWrapper.style.display = 'none';
       });
     }
+  });
+
+  // create new menu item
+  document.addEventListener("DOMContentLoaded", () => {
+    const cmSelect = document.getElementById("cm-select");
+
+    const wrappers = {
+      cat: document.getElementById("cm-cat-wrapper"),
+      section: document.getElementById("cm-section-wrapper"),
+      ftype: document.getElementById("cm-ftype-wrapper"),
+      name: document.getElementById("cm-name-wrapper"),
+      price: document.getElementById("cm-price-wrapper"),
+      hot: document.getElementById("cm-hot-wrapper"),
+      cold: document.getElementById("cm-cold-wrapper"),
+    };
+
+    function hideAll() {
+      Object.values(wrappers).forEach(w => w.style.display = "none");
+    }
+
+    function showFood() {
+      wrappers.cat.style.display = "block";
+      wrappers.section.style.display = "block";
+      wrappers.ftype.style.display = "block";
+      wrappers.name.style.display = "block";
+      wrappers.price.style.display = "block";
+    }
+
+    function showDrinks() {
+      wrappers.section.style.display = "block";
+      wrappers.name.style.display = "block";
+      wrappers.hot.style.display = "block";
+      wrappers.cold.style.display = "block";
+    }
+
+    function showAddon() {
+      wrappers.cat.style.display = "block";
+      wrappers.section.style.display = "block";
+      wrappers.name.style.display = "block";
+      wrappers.price.style.display = "block";
+    }
+
+    function updateForm() {
+      hideAll();
+      switch (cmSelect.value) {
+        case "food": showFood(); break;
+        case "drinks": showDrinks(); break;
+        case "addons": showAddon(); break;
+      }
+    }
+
+    cmSelect.addEventListener("change", updateForm);
+    updateForm(); // initial load
+
+    // validation before adding to menu
+    document.getElementById("cm-btn").addEventListener("click", () => {
+      const type = cmSelect.value;
+      const name = document.getElementById("cm-name").value.trim();
+      const price = document.getElementById("cm-price").value.trim();
+      const hot = document.getElementById("cm-hot-price").value.trim();
+      const cold = document.getElementById("cm-cold-price").value.trim();
+
+      if (name === "") {
+        e.preventDefault();
+        alert("Name cannot be empty.");
+        return;
+      }
+
+      if (type === "food" || type === "addons") {
+        if (price === "") {
+          e.preventDefault();
+          alert("Price is required.");
+          return;
+        }
+        if (!/^\d+(\.\d{1,2})?$/.test(price)) {
+          e.preventDefault();
+          alert("Invalid price format.");
+          return;
+        }
+      }
+
+      if (type === "drinks") {
+        if (hot === "" && cold === "") {
+          e.preventDefault();
+          alert("At least one of Hot or Cold price must be filled.");
+          return;
+        }
+        if (hot !== "" && !/^\d+(\.\d{1,2})?$/.test(hot)) {
+          e.preventDefault();
+          alert("Invalid hot price.");
+          return;
+        }
+        if (cold !== "" && !/^\d+(\.\d{1,2})?$/.test(cold)) {
+          e.preventDefault();
+          alert("Invalid cold price.");
+          return;
+        }
+      }
+    });
+  });
+
+  // delete menu item
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".del-item").forEach(del => {
+      del.addEventListener("click", (e) => {
+        document.getElementById("itemIdToDel").value = del.getAttribute("data-id");
+      });
+    });
   });
 </script>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 22, 2025 at 06:21 PM
+-- Generation Time: Jan 17, 2026 at 02:59 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -365,6 +365,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `Type` enum('online','walk-in') NOT NULL DEFAULT 'online',
   `Member_ID` varchar(255) NOT NULL,
   `Runner_ID` varchar(255) DEFAULT NULL,
+  `subTotal` decimal(10,2) NOT NULL DEFAULT 0.00,
   `Total_Amount` decimal(10,2) NOT NULL DEFAULT 0.00,
   `Order_Date` datetime NOT NULL DEFAULT current_timestamp(),
   `Ready_Date` datetime DEFAULT NULL,
@@ -373,6 +374,17 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `Payment_Method` enum('Cash on Delivery','Online Banking','E-Wallet') NOT NULL DEFAULT 'Cash on Delivery',
   `Status` enum('Cart','Order Placed','Readying Order','In Transit','Delivered','Completed') NOT NULL DEFAULT 'Cart'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`ID`, `Type`, `Member_ID`, `Runner_ID`, `subTotal`, `Total_Amount`, `Order_Date`, `Ready_Date`, `PickedUp_Date`, `Delivered_Date`, `Payment_Method`, `Status`) VALUES
+(42, 'online', 'M01', 'R01', 56.60, 50.94, '2026-01-17 03:27:14', '2026-01-17 03:32:22', '2026-01-17 03:32:31', '2026-01-17 03:55:43', 'Cash on Delivery', 'Completed'),
+(43, 'online', 'M01', 'R01', 51.50, 46.35, '2026-01-17 03:55:34', '2026-01-17 03:56:03', '2026-01-17 03:56:08', '2026-01-17 03:56:50', 'Cash on Delivery', 'Completed'),
+(44, 'online', 'M01', 'R01', 80.00, 72.00, '2026-01-17 03:56:29', '2026-01-17 03:56:44', '2026-01-17 03:56:45', '2026-01-17 03:56:52', 'Cash on Delivery', 'Completed'),
+(45, 'online', 'M01', 'R01', 18.00, 16.20, '2026-01-17 03:59:01', '2026-01-17 03:59:19', '2026-01-17 03:59:23', '2026-01-17 03:59:35', 'Cash on Delivery', 'Completed'),
+(46, 'online', 'M01', 'R01', 105.00, 94.50, '2026-01-17 04:00:33', '2026-01-17 04:00:39', '2026-01-17 04:00:44', '2026-01-17 04:00:49', 'Cash on Delivery', 'Completed');
 
 -- --------------------------------------------------------
 
@@ -392,6 +404,23 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   `Subtotal` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`ID`, `Order_ID`, `foodID`, `drinkID`, `Type`, `addonID`, `Quantity`, `Subtotal`) VALUES
+(92, 42, 'F008', NULL, NULL, NULL, 4, 30.00),
+(93, 42, 'F027', NULL, NULL, NULL, 4, 10.00),
+(94, 42, NULL, NULL, NULL, 'A007', 2, 7.00),
+(95, 42, NULL, 'B001', 'Hot', NULL, 2, 4.60),
+(96, 42, NULL, 'B001', 'Cold', NULL, 2, 5.00),
+(97, 43, 'F015', NULL, NULL, NULL, 3, 36.00),
+(98, 43, 'F027', NULL, NULL, NULL, 2, 5.00),
+(99, 43, NULL, NULL, NULL, 'A007', 3, 10.50),
+(100, 44, 'F005', NULL, NULL, NULL, 4, 80.00),
+(101, 45, 'F030', NULL, NULL, NULL, 2, 18.00),
+(102, 46, 'F055', NULL, NULL, NULL, 3, 105.00);
+
 -- --------------------------------------------------------
 
 --
@@ -408,7 +437,7 @@ CREATE TABLE IF NOT EXISTS `runners` (
   `Email` varchar(255) NOT NULL,
   `Platform` enum('Grab','Food Panda') NOT NULL,
   `Plate` varchar(10) NOT NULL,
-  `Status` enum('Active', 'Inactive', 'Disabled') NOT NULL DEFAULT 'Active'
+  `Status` enum('Active','Inactive','Disabled') NOT NULL DEFAULT 'Active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -510,13 +539,13 @@ ALTER TABLE `staff`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- Constraints for dumped tables

@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['username'])) {
 	$updateStmt = $pdo->prepare("UPDATE members SET Address = ? WHERE Username = ?");
 	$updateStmt->execute([$address, $username]);
 
-	$fetchTotal = $pdo->prepare("SELECT Total_Amount FROM orders WHERE ID = ?");
+	$fetchTotal = $pdo->prepare("SELECT subTotal FROM orders WHERE ID = ?");
 	$fetchTotal->execute([$order_id]);
 	$subtotal = $fetchTotal->fetchColumn();
 

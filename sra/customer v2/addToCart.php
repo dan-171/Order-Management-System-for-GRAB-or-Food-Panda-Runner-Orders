@@ -88,7 +88,7 @@ foreach ($cartItems as $id => $item) {
 		$updateStmt = $pdo->prepare("INSERT INTO order_items (Order_ID, $itemId, Type, Quantity, Subtotal) VALUES (?, ?, ?, ?, ?)");
 		$updateStmt->execute([$orderID, $realItemId, $item['type'] ?? null, $item['qty'], $subtotal]);
 	}
-	$updateStmt = $pdo->prepare("UPDATE orders SET Total_Amount = Total_Amount + ? WHERE ID = ?");
+	$updateStmt = $pdo->prepare("UPDATE orders SET subTotal = subTotal + ? WHERE ID = ?");
 	$updateStmt->execute([$subtotal, $orderID]);
 }
 

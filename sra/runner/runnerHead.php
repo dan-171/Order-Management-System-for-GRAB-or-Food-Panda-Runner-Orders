@@ -33,6 +33,7 @@ $fetchOrders = $pdo->prepare("SELECT
     m.Address as address,
     o.Member_ID AS memberId, 
     o.Runner_ID AS runnerId, 
+    o.subTotal AS subTotal,
     o.Total_Amount AS totalAmount, 
     o.Order_Date as 'dates.ordered', 
     o.Ready_Date as 'dates.ready', 

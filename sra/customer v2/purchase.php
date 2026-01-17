@@ -16,12 +16,12 @@ $stmt->execute([$username]);
 $member = $stmt->fetch();
 $currentAddress = $member['Address'] ?? ""; 
 
-$fetchCart = $pdo->prepare("SELECT o.ID, o.Total_Amount FROM orders o JOIN members m ON o.Member_ID = m.ID WHERE m.Username = ? AND o.status = 'cart'");
+$fetchCart = $pdo->prepare("SELECT o.ID, o.subTotal FROM orders o JOIN members m ON o.Member_ID = m.ID WHERE m.Username = ? AND o.status = 'cart'");
 $fetchCart->execute([$username]);
 $cart = $fetchCart->fetch();
 
 if ($cart) {
-  $grandTotal = $cart['Total_Amount'] ?? 0;
+  $grandTotal = $cart['subTotal'] ?? 0;
   $order_id = $cart['ID'];
 }
 

@@ -20,7 +20,7 @@
         $_SESSION["user"] = [
             "id" => $user["ID"],
         ];
-        header("Location: staffMain.html");
+        header("Location: staffMain.php");
         exit;
       } else $_SESSION["msg"] = "❌ Invalid credentials";
     }

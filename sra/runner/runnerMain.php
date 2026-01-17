@@ -60,6 +60,12 @@
 
           <div style="background:white; padding:10px; border:1px solid #ddd; border-radius:6px;">
                 ${itemsHtml}
+                
+                <div style="font-size: 13px; display: flex; justify-content: space-between;">
+                <span>Subtotal</span> 
+                <span>RM ${Number(order.subTotal).toFixed(2)}</span>
+                </div>       
+
                 <div class="discount-row"> 
                 <span>Member Discount (10%)</span> 
                 <span>-RM ${(order.totalAmount/9).toFixed(2)}</span>

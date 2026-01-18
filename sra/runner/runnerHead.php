@@ -44,7 +44,14 @@ $fetchOrders = $pdo->prepare("SELECT
     FROM orders o 
     JOIN members m ON o.Member_ID = m.ID 
     WHERE o.Status IN ('Readying Order', 'In Transit', 'Delivered', 'Completed')  AND o.Runner_ID = ?
-    ORDER BY o.Order_Date ASC");
+    ORDER BY CASE 
+        WHEN o.Status = 'Readying Order' THEN 1
+        WHEN o.Status = 'Order Placed' THEN 2
+        WHEN o.Status = 'In Transit' THEN 3
+        WHEN o.Status = 'Delivered' THEN 4
+        ELSE 5 
+    END ASC,
+    o.Order_Date ASC");
 $fetchOrders->execute([$currentRunnerID]);
 $orders = $fetchOrders->fetchAll(PDO::FETCH_ASSOC);
 

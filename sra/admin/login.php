@@ -9,7 +9,7 @@
   $tempPW = $_SESSION["tempPW"] ?? "";
   echo "<script> 
   let msg = " . json_encode($forgotMsg) . ";
-  let tempPW = " . json_encode($tempPW) . ";z
+  let tempPW = " . json_encode($tempPW) . ";
    if (tempPW && tempPW.trim() !== '') {
         prompt(msg, tempPW);
     } else {

@@ -318,122 +318,169 @@
 </div>
 
 <script>
-  // hide order details
-  document.addEventListener('DOMContentLoaded', () => {
-    const hideOrderBtn = document.getElementById('hide-order-details-btn');
-    const orderDetailsWrapper = document.getElementById('order-details-wrapper');
-    if (hideOrderBtn && orderDetailsWrapper) {
-      hideOrderBtn.addEventListener('click', () => {
-        orderDetailsWrapper.style.display = 'none';
-      });
-    }
-  });
-
+document.addEventListener('DOMContentLoaded', () => {
   // create new menu item
-  document.addEventListener("DOMContentLoaded", () => {
-    const cmSelect = document.getElementById("cm-select");
+  const cmSelect = document.getElementById("cm-select");
+  const cmSelectCat = document.getElementById("cm-select-cat");
+  const cmSelectSection = document.getElementById("cm-select-section");
+  const cmSelectFType = document.getElementById("cm-select-type");
+  const wrappers = {
+    cat: document.getElementById("cm-cat-wrapper"),
+    section: document.getElementById("cm-section-wrapper"),
+    ftype: document.getElementById("cm-ftype-wrapper"),
+    name: document.getElementById("cm-name-wrapper"),
+    price: document.getElementById("cm-price-wrapper"),
+    hot: document.getElementById("cm-hot-wrapper"),
+    cold: document.getElementById("cm-cold-wrapper"),
+  };
 
-    const wrappers = {
-      cat: document.getElementById("cm-cat-wrapper"),
-      section: document.getElementById("cm-section-wrapper"),
-      ftype: document.getElementById("cm-ftype-wrapper"),
-      name: document.getElementById("cm-name-wrapper"),
-      price: document.getElementById("cm-price-wrapper"),
-      hot: document.getElementById("cm-hot-wrapper"),
-      cold: document.getElementById("cm-cold-wrapper"),
-    };
+  function hideAll() {
+    Object.values(wrappers).forEach(w => w.style.display = "none");
+  }
 
-    function hideAll() {
-      Object.values(wrappers).forEach(w => w.style.display = "none");
+  function showFood() {
+    wrappers.cat.style.display = "block";
+    wrappers.section.style.display = "block";
+    wrappers.ftype.style.display = "block";
+    wrappers.name.style.display = "block";
+    wrappers.price.style.display = "block";
+  }
+
+  function showDrinks() {
+    wrappers.section.style.display = "block";
+    wrappers.name.style.display = "block";
+    wrappers.hot.style.display = "block";
+    wrappers.cold.style.display = "block";
+  }
+
+  function showAddon() {
+    wrappers.cat.style.display = "block";
+    wrappers.section.style.display = "block";
+    wrappers.name.style.display = "block";
+    wrappers.price.style.display = "block";
+  }
+
+  function updateForm() {
+    hideAll();
+    switch (cmSelect.value) {
+      case "food": showFood(); break;
+      case "drinks": showDrinks(); break;
+      case "addons": showAddon(); break;
     }
+  }
+  updateForm();
+  cmSelect.addEventListener("change", updateForm);
 
-    function showFood() {
-      wrappers.cat.style.display = "block";
-      wrappers.section.style.display = "block";
-      wrappers.ftype.style.display = "block";
-      wrappers.name.style.display = "block";
-      wrappers.price.style.display = "block";
-    }
+  // allow section selection based on cat selection & type selection based on section selection
+  function setAllowedOptions(selectElement, allowedValues = []) {
+    let selected = false;
 
-    function showDrinks() {
-      wrappers.section.style.display = "block";
-      wrappers.name.style.display = "block";
-      wrappers.hot.style.display = "block";
-      wrappers.cold.style.display = "block";
-    }
-
-    function showAddon() {
-      wrappers.cat.style.display = "block";
-      wrappers.section.style.display = "block";
-      wrappers.name.style.display = "block";
-      wrappers.price.style.display = "block";
-    }
-
-    function updateForm() {
-      hideAll();
-      switch (cmSelect.value) {
-        case "food": showFood(); break;
-        case "drinks": showDrinks(); break;
-        case "addons": showAddon(); break;
+    for (const option of selectElement.options) {
+      if (allowedValues.includes(option.value)) {
+        option.disabled = false;
+        if (!selected) {
+          option.selected = true;
+          selected = true;
+        }
+      } else {
+        option.disabled = true;
+        option.selected = false;
       }
     }
+    if (!selected)
+      selectElement.selectedIndex = -1;
+  }
 
-    cmSelect.addEventListener("change", updateForm);
-    updateForm(); // initial load
+  function enableSection() {
+    const cat = cmSelectCat.value;
+    if(cmSelect.value != "drinks"){
+      if (cat === "Signature")
+        setAllowedOptions(cmSelectSection, ["Sup ZZ", "Mee Rebus ZZ", "Add On", "Add On Set"]);
+      else if (cat === "Breakfast")
+        setAllowedOptions(cmSelectSection, ["Masakan Panas", "Roti Bakar", "Add On (For Roti)"]);
+      else if (cat === "Lunch")
+        setAllowedOptions(cmSelectSection, ["Masakan Panas", "Set Nasi & Lauk"]);
+      else if (cat === "Roti")
+        setAllowedOptions(cmSelectSection, ["Roti Menu"]);
+      else if (cat === "Ikan")
+        setAllowedOptions(cmSelectSection, ["Ikan Siakap", "Bakar-Bakar"]);
+      else if (cat === "Ala-Carte")
+        setAllowedOptions(cmSelectSection, ["Sayur", "Aneka Lauk Thai", "Goreng Tepung", "Add On (For Aneka Lauk Thai)"]);
+      else if (cat === "Ala-Carte 2")
+        setAllowedOptions(cmSelectSection, ["Sup Ala Thai", "Tomyam", "Mee Kuah", "Add On (For Ala Thai & Tomyam)"]);
+      else if (cat === "Western")
+        setAllowedOptions(cmSelectSection, ["Fried & Grill", "Spaghetti", "Burger", "Sides", "Add On (For Burger)"]);
+      else if (cat === "Goreng-goreng")
+        setAllowedOptions(cmSelectSection, ["Nasi Goreng", "Mee Goreng"]);
+      else
+        setAllowedOptions(cmSelectSection, []);
+    }
+  }
+  console.log(cmSelect.value);
+  enableSection();
+  cmSelect.addEventListener("change", enableSection);
+  cmSelectCat.addEventListener("change", enableSection);
 
-    // validation before adding to menu
-    document.getElementById("cm-btn").addEventListener("click", () => {
-      const type = cmSelect.value;
-      const name = document.getElementById("cm-name").value.trim();
-      const price = document.getElementById("cm-price").value.trim();
-      const hot = document.getElementById("cm-hot-price").value.trim();
-      const cold = document.getElementById("cm-cold-price").value.trim();
+  // allow type selection based on section selection
+  function enableType() {
+    if (cmSelectSection.value === "Mee Kuah")
+      setAllowedOptions(cmSelectFType, ["Mee", "Mee Hoon", "Kuey Teow"]);
+    else if (cmSelectSection.value === "Nasi Goreng" || cmSelectSection.value === "Mee Goreng")
+      setAllowedOptions(cmSelectFType, ["Original", "Daging", "Udang", "Sotong"]);
+    else
+      setAllowedOptions(cmSelectFType, []);
+  }
+  enableType();
+  cmSelectSection.addEventListener("change", enableType);
 
-      if (name === "") {
+  // validation before adding to menu
+  let createItemMsg = document.getElementById("item-create-msg");
+  document.getElementById("cm-btn").addEventListener("click", (e) => {
+    const type = cmSelect.value;
+    const name = document.getElementById("cm-name").value.trim();
+    const price = document.getElementById("cm-price").value.trim();
+    const hot = document.getElementById("cm-hot-price").value.trim();
+    const cold = document.getElementById("cm-cold-price").value.trim();
+
+    if (name === "") {
+      e.preventDefault();
+      createItemMsg.textContent = "❌ Item name is required."
+      return;
+    }
+
+    if ((type === "food" || type === "addons") && (price === "" || !/^\d+(\.\d{1,2})?$/.test(price))) {
+      e.preventDefault();
+      createItemMsg.textContent = "❌ Invalid Price."
+      return;
+    }
+
+    if (type === "drinks") {
+      if (hot === "" && cold === "") {
         e.preventDefault();
-        alert("Name cannot be empty.");
-        return;
+        createItemMsg.textContent = "❌ At least one of hot or cold price must be filled.";
       }
-
-      if (type === "food" || type === "addons") {
-        if (price === "") {
-          e.preventDefault();
-          alert("Price is required.");
-          return;
-        }
-        if (!/^\d+(\.\d{1,2})?$/.test(price)) {
-          e.preventDefault();
-          alert("Invalid price format.");
-          return;
-        }
+      if ((hot !== "" && !/^\d+(\.\d{1,2})?$/.test(hot)) || (cold !== "" && !/^\d+(\.\d{1,2})?$/.test(cold))) {
+        e.preventDefault();
+        createItemMsg.textContent = "❌ Invalid Price.";
       }
-
-      if (type === "drinks") {
-        if (hot === "" && cold === "") {
-          e.preventDefault();
-          alert("At least one of Hot or Cold price must be filled.");
-          return;
-        }
-        if (hot !== "" && !/^\d+(\.\d{1,2})?$/.test(hot)) {
-          e.preventDefault();
-          alert("Invalid hot price.");
-          return;
-        }
-        if (cold !== "" && !/^\d+(\.\d{1,2})?$/.test(cold)) {
-          e.preventDefault();
-          alert("Invalid cold price.");
-          return;
-        }
-      }
-    });
+      return;
+    }
   });
 
   // delete menu item
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".del-item").forEach(del => {
-      del.addEventListener("click", (e) => {
-        document.getElementById("itemIdToDel").value = del.getAttribute("data-id");
-      });
+  document.querySelectorAll(".del-item").forEach(del => {
+    del.addEventListener("click", (e) => {
+      document.getElementById("itemIdToDel").value = del.getAttribute("data-id");
     });
   });
+
+  // hide order details
+  const hideOrderBtn = document.getElementById('hide-order-details-btn');
+  const orderDetailsWrapper = document.getElementById('order-details-wrapper');
+  if (hideOrderBtn && orderDetailsWrapper) {
+    hideOrderBtn.addEventListener('click', () => {
+      orderDetailsWrapper.style.display = 'none';
+    });
+  }
+});
 </script>

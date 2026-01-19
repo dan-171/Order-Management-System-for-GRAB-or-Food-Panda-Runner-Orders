@@ -194,7 +194,7 @@
       $name       = trim($_POST['nameCM'] ?? '');
       $section    = trim($_POST['itemSectionCM'] ?? '');
       if ($name === '' || $section === '') {
-        $_SESSION['itemCreateMsg'] = "❌ Name and Section are required.";
+        $_SESSION['itemCreateMsg'] = "❌ Item Name and Section are required.";
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
       }

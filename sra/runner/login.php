@@ -64,8 +64,8 @@
   </div>
   <p id="err-msg"><?= htmlspecialchars($msg)?></p>
   <div id="delivery-platforms">
-    <img src="../../images/grab-food-logo.png" class = "grab" alt="grab"/>
-    <img src="../../images/foodpanda-logo.png" class = "foodpanda" alt="foodpanda"/>
+    <img src="../../images/grab-logo.webp" class = "grab" alt="grab"/>
+    <img src="../../images/foodpanda-logo.webp" class = "foodpanda" alt="foodpanda"/>
   </div>
   <div id="reg-box">
     <p id="reg-text">Looking to be a rider?</p>

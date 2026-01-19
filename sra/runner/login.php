@@ -11,7 +11,11 @@
  echo "<script> 
     let msg = " . json_encode($forgotMsg) . ";
     let tempPW = " . json_encode($tempPW) . ";
-    prompt(msg, tempPW); 
+    if (tempPW && tempPW.trim() !== '') {
+        prompt(msg, tempPW);
+    } else {
+        alert(msg);
+    }
     </script>";
     unset($_SESSION["forgotMsg"]);
   }

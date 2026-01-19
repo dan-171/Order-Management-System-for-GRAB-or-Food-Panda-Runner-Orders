@@ -17,6 +17,7 @@
     }
   </script>";
   unset($_SESSION["forgotMsg"]);
+  unset($_SESSION["tempPW"]);
   }
 
   if($_SERVER["REQUEST_METHOD"] == "POST"){

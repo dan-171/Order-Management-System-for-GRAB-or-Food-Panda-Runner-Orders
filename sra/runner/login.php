@@ -18,6 +18,7 @@
     }
     </script>";
     unset($_SESSION["forgotMsg"]);
+    unset($_SESSION["tempPW"]);
   }
 
   $regSuccess = $_SESSION["regSuccess"] ?? "";
